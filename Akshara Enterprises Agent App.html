@@ -1,0 +1,811 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Akshara Enterprises - Care of Money</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        emerald: {
+                            50: '#ecfdf5',
+                            100: '#d1fae5',
+                            500: '#10b981',
+                            600: '#059669',
+                            700: '#047857',
+                            800: '#065f46',
+                            900: '#064e3b',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #f3f4f6; }
+        /* Mobile Frame Container for Desktop view */
+        .mobile-frame {
+            max-width: 440px;
+            margin: 0 auto;
+            min-height: 100vh;
+            background-color: #f8fafc;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+        @media (min-width: 640px) {
+            .mobile-frame {
+                min-height: 90vh;
+                margin-top: 5vh;
+                margin-bottom: 5vh;
+                border-radius: 2.5rem;
+                overflow: hidden;
+                border: 8px solid #1e293b;
+            }
+        }
+        /* Hide scrollbars for clean look */
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+</head>
+<body class="h-full flex flex-col justify-between">
+
+    <div class="mobile-frame flex flex-col h-full text-slate-800">
+
+        <!-- Custom Notification Modal -->
+        <div id="custom-modal" class="hidden fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+            <div class="bg-white rounded-2xl w-full max-w-xs p-6 shadow-2xl text-center transform transition-all">
+                <div id="modal-icon" class="w-14 h-14 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl">
+                    <i class="fa-solid fa-check"></i>
+                </div>
+                <h3 id="modal-title" class="text-lg font-bold text-slate-900 mb-1">Success</h3>
+                <p id="modal-message" class="text-sm text-slate-600 mb-6">Action completed successfully.</p>
+                <button onclick="closeModal()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-3 rounded-xl transition shadow-lg shadow-emerald-600/30">Okay</button>
+            </div>
+        </div>
+
+        <!-- AdMob Simulation Banner Top -->
+        <div id="admob-banner" class="bg-slate-900 text-white text-[10px] px-3 py-1 flex items-center justify-between z-40 border-b border-slate-800">
+            <span class="flex items-center gap-1.5"><i class="fa-solid fa-rectangle-ad text-emerald-400"></i> Sponsored Ad (Google AdMob)</span>
+            <span class="bg-slate-800 text-slate-400 px-1.5 py-0.5 rounded text-[9px] uppercase tracking-wider">Ad</span>
+        </div>
+
+        <!-- 1. AUTHENTICATION VIEW -->
+        <div id="view-auth" class="flex-1 flex flex-col justify-between p-6 bg-gradient-to-br from-emerald-900 via-emerald-800 to-slate-900 text-white overflow-y-auto">
+            <div class="pt-8 text-center">
+                <div class="w-20 h-20 bg-white/10 backdrop-blur-md rounded-3xl mx-auto flex items-center justify-center border border-white/20 mb-4 shadow-xl">
+                    <i class="fa-solid fa-hand-holding-dollar text-4xl text-emerald-400"></i>
+                </div>
+                <h1 class="text-2xl font-bold tracking-tight">Akshara Enterprises</h1>
+                <p class="text-xs text-emerald-300 font-medium tracking-wide uppercase mt-1">Care of Money • Agent Partner Network</p>
+            </div>
+
+            <div class="bg-white/10 backdrop-blur-md p-6 rounded-3xl border border-white/15 shadow-2xl my-6">
+                <h2 class="text-lg font-semibold mb-4 text-white">Agent Portal Sign In</h2>
+                <form id="auth-form" onsubmit="handleAuth(event)" class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-medium text-emerald-200 mb-1.5">Phone Number or Email</label>
+                        <div class="relative">
+                            <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-400"><i class="fa-solid fa-user-shield"></i></span>
+                            <input type="text" id="auth-identifier" required placeholder="Enter phone or email" class="w-full pl-10 pr-4 py-3 bg-slate-900/50 border border-slate-700 rounded-xl text-sm text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500 transition">
+                        </div>
+                    </div>
+
+                    <div id="otp-container" class="hidden">
+                        <label class="block text-xs font-medium text-emerald-200 mb-1.5">Enter OTP (Simulated: 1234)</label>
+                        <input type="text" id="auth-otp" maxlength="4" placeholder="• • • •" class="w-full text-center tracking-widest text-lg py-3 bg-slate-900/50 border border-slate-700 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500 transition">
+                    </div>
+
+                    <button type="submit" id="auth-btn" class="w-full bg-emerald-500 hover:bg-emerald-600 active:scale-[0.98] text-slate-950 font-bold py-3.5 rounded-xl transition shadow-lg shadow-emerald-500/20">
+                        Get OTP / Continue
+                    </button>
+                </form>
+
+                <div class="mt-4 text-center">
+                    <button onclick="fillDemoAgent()" class="text-xs text-emerald-300 hover:text-white underline">Quick Demo Agent Login</button>
+                </div>
+            </div>
+
+            <div class="text-center text-[11px] text-slate-400 pb-4">
+                Secured by Firebase Auth & Firestore • Version 2.5.0
+            </div>
+        </div>
+
+        <!-- MAIN APP SHELL (Hidden until logged in) -->
+        <div id="main-app" class="hidden flex-1 flex flex-col h-full overflow-hidden bg-slate-50">
+            
+            <!-- Top Navigation Bar -->
+            <header class="bg-white px-4 py-3 border-b border-slate-200 flex items-center justify-between z-30 shadow-sm">
+                <div class="flex items-center gap-3">
+                    <div class="w-9 h-9 bg-emerald-600 rounded-xl flex items-center justify-center text-white font-bold shadow-md shadow-emerald-600/30">
+                        AE
+                    </div>
+                    <div>
+                        <h2 class="text-xs font-bold text-slate-900 leading-tight">Akshara Enterprises</h2>
+                        <span id="agent-badge-status" class="text-[10px] bg-emerald-100 text-emerald-800 px-1.5 py-0.5 rounded font-medium">Verified Agent</span>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button onclick="triggerInterstitialAd()" class="bg-amber-100 text-amber-800 px-2 py-1 rounded-lg text-[11px] font-semibold flex items-center gap-1 hover:bg-amber-200 transition">
+                        <i class="fa-solid fa-bolt text-amber-600"></i> Earn Boost
+                    </button>
+                    <button onclick="switchTab('settings')" class="w-9 h-9 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl flex items-center justify-center transition">
+                        <i class="fa-solid fa-gear text-sm"></i>
+                    </button>
+                </div>
+            </header>
+
+            <!-- Dynamic Tab Content Container -->
+            <main class="flex-1 overflow-y-auto no-scrollbar pb-24">
+
+                <!-- TAB 1: DASHBOARD -->
+                <div id="tab-dashboard" class="p-4 space-y-4">
+                    <!-- Wallet & Earnings Card -->
+                    <div class="bg-gradient-to-r from-emerald-800 to-emerald-950 rounded-2xl p-5 text-white shadow-xl relative overflow-hidden">
+                        <div class="absolute -right-6 -bottom-6 w-32 h-32 bg-emerald-500/10 rounded-full blur-xl pointer-events-none"></div>
+                        <div class="flex justify-between items-start mb-4">
+                            <div>
+                                <p class="text-xs text-emerald-300 uppercase tracking-wider font-medium">Total Wallet Earnings</p>
+                                <h3 id="dash-wallet-balance" class="text-3xl font-extrabold mt-1">₹ 24,850</h3>
+                            </div>
+                            <button onclick="requestPayout()" class="bg-emerald-500 hover:bg-emerald-400 text-slate-950 text-xs font-bold px-3.5 py-2 rounded-xl shadow-md transition">
+                                <i class="fa-solid fa-wallet mr-1"></i> Withdraw
+                            </button>
+                        </div>
+                        <div class="grid grid-cols-3 gap-2 pt-3 border-t border-emerald-700/60 text-center">
+                            <div>
+                                <span class="text-[10px] text-emerald-300 block">Pending</span>
+                                <span id="dash-pending" class="text-sm font-bold">₹ 5,000</span>
+                            </div>
+                            <div class="border-x border-emerald-700/60">
+                                <span class="text-[10px] text-emerald-300 block">Disbursed</span>
+                                <span id="dash-disbursed" class="text-sm font-bold">₹ 19,850</span>
+                            </div>
+                            <div>
+                                <span class="text-[10px] text-emerald-300 block">Total Leads</span>
+                                <span id="dash-total-leads" class="text-sm font-bold">14</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Quick Actions Banner -->
+                    <div class="grid grid-cols-4 gap-2 text-center">
+                        <button onclick="switchTab('catalog')" class="bg-white p-3 rounded-2xl shadow-sm border border-slate-100 hover:border-emerald-500 transition flex flex-col items-center">
+                            <div class="w-10 h-10 bg-emerald-50 text-emerald-600 rounded-xl flex items-center justify-center mb-1.5 text-base">
+                                <i class="fa-solid fa-briefcase"></i>
+                            </div>
+                            <span class="text-[11px] font-semibold text-slate-700">Products</span>
+                        </button>
+                        <button onclick="openLeadModal()" class="bg-white p-3 rounded-2xl shadow-sm border border-slate-100 hover:border-emerald-500 transition flex flex-col items-center">
+                            <div class="w-10 h-10 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center mb-1.5 text-base">
+                                <i class="fa-solid fa-user-plus"></i>
+                            </div>
+                            <span class="text-[11px] font-semibold text-slate-700">Add Lead</span>
+                        </button>
+                        <button onclick="switchTab('leads')" class="bg-white p-3 rounded-2xl shadow-sm border border-slate-100 hover:border-emerald-500 transition flex flex-col items-center">
+                            <div class="w-10 h-10 bg-purple-50 text-purple-600 rounded-xl flex items-center justify-center mb-1.5 text-base">
+                                <i class="fa-solid fa-clipboard-list"></i>
+                            </div>
+                            <span class="text-[11px] font-semibold text-slate-700">Track Leads</span>
+                        </button>
+                        <button onclick="switchTab('settings')" class="bg-white p-3 rounded-2xl shadow-sm border border-slate-100 hover:border-emerald-500 transition flex flex-col items-center">
+                            <div class="w-10 h-10 bg-amber-50 text-amber-600 rounded-xl flex items-center justify-center mb-1.5 text-base">
+                                <i class="fa-solid fa-sliders"></i>
+                            </div>
+                            <span class="text-[11px] font-semibold text-slate-700">Admin Links</span>
+                        </button>
+                    </div>
+
+                    <!-- Banner AdMob Simulation -->
+                    <div class="bg-gradient-to-r from-slate-900 to-slate-800 rounded-2xl p-3.5 text-white flex items-center justify-between shadow-md">
+                        <div class="flex items-center gap-3">
+                            <div class="w-9 h-9 bg-emerald-500/20 text-emerald-400 rounded-xl flex items-center justify-center text-lg">
+                                <i class="fa-solid fa-percent"></i>
+                            </div>
+                            <div>
+                                <h4 class="text-xs font-bold">Special FinBox Payout Boost</h4>
+                                <p class="text-[10px] text-slate-300">Earn +1.5% extra commission on Business Loans this week.</p>
+                            </div>
+                        </div>
+                        <button onclick="switchTab('catalog')" class="bg-emerald-500 text-slate-950 font-bold text-[11px] px-3 py-1.5 rounded-lg whitespace-nowrap shadow">Explore</button>
+                    </div>
+
+                    <!-- Recent Leads Tracker Preview -->
+                    <div>
+                        <div class="flex justify-between items-center mb-2">
+                            <h4 class="text-xs font-bold uppercase tracking-wider text-slate-500">Recent Customer Leads</h4>
+                            <button onclick="switchTab('leads')" class="text-xs font-semibold text-emerald-600 hover:underline">View All</button>
+                        </div>
+                        <div id="recent-leads-list" class="space-y-2">
+                            <!-- Populated dynamically -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TAB 2: PRODUCT CATALOG -->
+                <div id="tab-catalog" class="hidden p-4 space-y-4">
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <h3 class="text-base font-bold text-slate-900">Financial Products</h3>
+                            <p class="text-xs text-slate-500">Share customized referral links & earn instant commission</p>
+                        </div>
+                        <span class="text-xs bg-emerald-100 text-emerald-800 px-2 py-1 rounded-lg font-medium">FinBox / Muthoot</span>
+                    </div>
+
+                    <!-- Search / Filter -->
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400"><i class="fa-solid fa-magnifying-glass"></i></span>
+                        <input type="text" oninput="filterProducts(this.value)" placeholder="Search loans, credit cards..." class="w-full pl-9 pr-4 py-2.5 bg-white border border-slate-200 rounded-xl text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:border-emerald-500 shadow-sm">
+                    </div>
+
+                    <!-- Products List Container -->
+                    <div id="products-catalog-list" class="space-y-3">
+                        <!-- Populated dynamically from storage -->
+                    </div>
+                </div>
+
+                <!-- TAB 3: LEADS & PAYOUTS -->
+                <div id="tab-leads" class="hidden p-4 space-y-4">
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <h3 class="text-base font-bold text-slate-900">Lead Status Tracking</h3>
+                            <p class="text-xs text-slate-500">Monitor approval and disbursement stages</p>
+                        </div>
+                        <button onclick="openLeadModal()" class="bg-emerald-600 text-white text-xs font-bold px-3 py-2 rounded-xl shadow hover:bg-emerald-700 transition">
+                            <i class="fa-solid fa-plus mr-1"></i> New Lead
+                        </button>
+                    </div>
+
+                    <!-- Leads Status Filter Tabs -->
+                    <div class="flex gap-1.5 overflow-x-auto no-scrollbar pb-1">
+                        <button onclick="filterLeads('ALL')" class="lead-filter-btn px-3 py-1.5 bg-emerald-600 text-white rounded-xl text-xs font-semibold whitespace-nowrap shadow-sm">All Leads</button>
+                        <button onclick="filterLeads('Pending')" class="lead-filter-btn px-3 py-1.5 bg-white text-slate-700 border border-slate-200 rounded-xl text-xs font-semibold whitespace-nowrap">Pending</button>
+                        <button onclick="filterLeads('Approved')" class="lead-filter-btn px-3 py-1.5 bg-white text-slate-700 border border-slate-200 rounded-xl text-xs font-semibold whitespace-nowrap">Approved</button>
+                        <button onclick="filterLeads('Disbursed')" class="lead-filter-btn px-3 py-1.5 bg-white text-slate-700 border border-slate-200 rounded-xl text-xs font-semibold whitespace-nowrap">Disbursed</button>
+                    </div>
+
+                    <div id="leads-full-list" class="space-y-3">
+                        <!-- Populated dynamically -->
+                    </div>
+                </div>
+
+                <!-- TAB 4: ADMIN & SETTINGS -->
+                <div id="tab-settings" class="hidden p-4 space-y-4">
+                    <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200">
+                        <div class="flex items-center gap-3 mb-4">
+                            <div class="w-12 h-12 bg-emerald-100 text-emerald-700 rounded-2xl flex items-center justify-center text-xl font-bold">
+                                AE
+                            </div>
+                            <div>
+                                <h3 id="settings-agent-name" class="text-sm font-bold text-slate-900">Akshara Partner</h3>
+                                <p id="settings-agent-phone" class="text-xs text-slate-500">+91 98765 43210</p>
+                            </div>
+                        </div>
+                        <div class="border-t border-slate-100 pt-3 flex justify-between items-center">
+                            <span class="text-xs text-slate-600 font-medium">Firebase Backend Sync</span>
+                            <span class="text-[10px] bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full font-semibold">Active / Online</span>
+                        </div>
+                    </div>
+
+                    <!-- Dynamic Referral Link Manager -->
+                    <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200">
+                        <div class="flex justify-between items-center mb-3">
+                            <h4 class="text-xs font-bold uppercase tracking-wider text-slate-500">Partner Referral Links (Admin Panel)</h4>
+                            <button onclick="resetDefaultLinks()" class="text-[11px] text-emerald-600 hover:underline">Reset Default</button>
+                        </div>
+                        <p class="text-xs text-slate-500 mb-3">Update your partner referral links on the fly. Changes apply instantly to all shared links.</p>
+                        
+                        <div id="admin-links-editor" class="space-y-3">
+                            <!-- Populated dynamically -->
+                        </div>
+                    </div>
+
+                    <!-- App Control Buttons -->
+                    <div class="space-y-2">
+                        <button onclick="triggerInterstitialAd()" class="w-full bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold py-3 rounded-xl transition flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-rectangle-ad text-emerald-400"></i> Test AdMob Interstitial Ad
+                        </button>
+                        <button onclick="handleLogout()" class="w-full bg-red-50 hover:bg-red-100 text-red-600 text-xs font-semibold py-3 rounded-xl transition flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-right-from-bracket"></i> Sign Out Partner Account
+                        </button>
+                    </div>
+                </div>
+
+            </main>
+
+            <!-- Bottom Navigation Bar -->
+            <nav class="absolute bottom-0 left-0 right-0 bg-white border-t border-slate-200 py-2 px-6 flex justify-between items-center z-30 shadow-lg">
+                <button onclick="switchTab('dashboard')" id="nav-btn-dashboard" class="flex flex-col items-center text-emerald-600 transition">
+                    <i class="fa-solid fa-house text-base"></i>
+                    <span class="text-[10px] font-semibold mt-1">Dashboard</span>
+                </button>
+                <button onclick="switchTab('catalog')" id="nav-btn-catalog" class="flex flex-col items-center text-slate-400 hover:text-slate-600 transition">
+                    <i class="fa-solid fa-briefcase text-base"></i>
+                    <span class="text-[10px] font-medium mt-1">Products</span>
+                </button>
+                <button onclick="switchTab('leads')" id="nav-btn-leads" class="flex flex-col items-center text-slate-400 hover:text-slate-600 transition">
+                    <i class="fa-solid fa-clipboard-list text-base"></i>
+                    <span class="text-[10px] font-medium mt-1">Leads</span>
+                </button>
+                <button onclick="switchTab('settings')" id="nav-btn-settings" class="flex flex-col items-center text-slate-400 hover:text-slate-600 transition">
+                    <i class="fa-solid fa-sliders text-base"></i>
+                    <span class="text-[10px] font-medium mt-1">Admin</span>
+                </button>
+            </nav>
+
+        </div>
+
+        <!-- Add Lead Modal -->
+        <div id="lead-modal" class="hidden fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4">
+            <div class="bg-white rounded-t-3xl sm:rounded-2xl w-full max-w-md p-6 shadow-2xl transform transition-all max-h-[90vh] overflow-y-auto">
+                <div class="flex justify-between items-center mb-4 pb-2 border-b border-slate-100">
+                    <h3 class="text-base font-bold text-slate-900">Add Customer Loan Lead</h3>
+                    <button onclick="closeLeadModal()" class="w-8 h-8 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-full flex items-center justify-center transition">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+                
+                <form id="lead-form" onsubmit="submitNewLead(event)" class="space-y-3.5">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">Customer Full Name</label>
+                        <input type="text" id="lead-name" required placeholder="e.g. Ramesh Kumar" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 focus:outline-none focus:border-emerald-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">Customer Phone Number</label>
+                        <input type="tel" id="lead-phone" required placeholder="10-digit mobile number" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 focus:outline-none focus:border-emerald-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">Select Financial Product</label>
+                        <select id="lead-product" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 focus:outline-none focus:border-emerald-500">
+                            <option value="Business Loan (Daily EMI)">Business Loan (Daily EMI)</option>
+                            <option value="Business Loan (Monthly EMI)">Business Loan (Monthly EMI)</option>
+                            <option value="Salary Loan (Instant)">Salary Loan (Instant)</option>
+                            <option value="Credit Card Partner Offer">Credit Card Partner Offer</option>
+                            <option value="Muthoot Gold Loan">Muthoot Gold Loan</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">Required Loan Amount (₹)</label>
+                        <input type="number" id="lead-amount" required placeholder="e.g. 150000" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 focus:outline-none focus:border-emerald-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">Initial Status</label>
+                        <select id="lead-status" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 focus:outline-none focus:border-emerald-500">
+                            <option value="Pending">Pending (Under Review)</option>
+                            <option value="Approved">Approved</option>
+                            <option value="Disbursed">Disbursed (Commission Earned)</option>
+                        </select>
+                    </div>
+
+                    <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-xl transition shadow-lg shadow-emerald-600/30 mt-2">
+                        Save Lead to Database
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- AdMob Interstitial Simulated Fullscreen Ad -->
+        <div id="interstitial-ad-modal" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-6">
+            <div class="bg-slate-900 border border-slate-800 rounded-3xl w-full max-w-sm p-6 text-center text-white relative shadow-2xl">
+                <span class="absolute top-4 right-4 bg-slate-800 text-slate-400 px-2 py-0.5 rounded text-[10px] uppercase font-mono">AdMob Interstitial</span>
+                <div class="w-16 h-16 bg-gradient-to-tr from-amber-500 to-emerald-500 text-slate-950 font-black text-2xl rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg">
+                    AE
+                </div>
+                <h3 class="text-lg font-bold mb-1">Akshara Financial Partner Offer</h3>
+                <p class="text-xs text-slate-300 mb-6">Get Instant Business Loans up to ₹15 Lakhs with zero collateral through FinBox API.</p>
+                
+                <div class="bg-slate-800/80 p-3 rounded-xl mb-6 text-xs text-emerald-400 font-medium">
+                    <i class="fa-solid fa-gift mr-1"></i> Watching this ad credits +₹100 bonus to your agent wallet!
+                </div>
+
+                <button onclick="closeInterstitialAd()" class="w-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold py-3 rounded-xl transition shadow-lg shadow-emerald-500/20">
+                    Close Ad & Claim Bonus
+                </button>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // Default Products Data Catalog
+        const defaultProducts = [
+            {
+                id: 'prod-1',
+                name: 'Business Loan (Daily EMI)',
+                provider: 'FinBox Lending',
+                commission: 'Earn up to 3.5%',
+                payout: '₹ 5,250 on ₹1.5L',
+                badge: 'High Commission',
+                link: 'https://finbox.in/partner/akshara-business-daily'
+            },
+            {
+                id: 'prod-2',
+                name: 'Business Loan (Monthly EMI)',
+                provider: 'Muthoot Finance',
+                commission: 'Earn up to 2.8%',
+                payout: '₹ 4,000 on ₹2L',
+                badge: 'Popular',
+                link: 'https://muthootfinance.com/referral/akshara-monthly'
+            },
+            {
+                id: 'prod-3',
+                name: 'Instant Salary Loan',
+                provider: 'FinBox SalaryCash',
+                commission: 'Earn flat ₹ 1,200',
+                payout: 'Per Disbursal',
+                badge: 'Fast Approval',
+                link: 'https://finbox.in/salary/akshara-instant'
+            },
+            {
+                id: 'prod-4',
+                name: 'Lifetime Free Credit Card',
+                provider: 'HDFC / ICICI Bank',
+                commission: 'Earn flat ₹ 2,200',
+                payout: 'Per Card Activation',
+                badge: 'Zero Fee',
+                link: 'https://cards.aksharaenterprises.com/apply'
+            },
+            {
+                id: 'prod-5',
+                name: 'Gold Loan Quick Cash',
+                provider: 'Muthoot Gold',
+                commission: 'Earn up to 2.0%',
+                payout: 'Instant Payout',
+                badge: 'Trusted',
+                link: 'https://muthootgold.in/partner/akshara'
+            }
+        ];
+
+        // Default Sample Leads
+        const defaultLeads = [
+            { id: 'lead-1', name: 'Suresh Patel', phone: '9822114455', product: 'Business Loan (Daily EMI)', amount: 150000, status: 'Disbursed', date: '2026-03-05' },
+            { id: 'lead-2', name: 'Aniket Deshmukh', phone: '9765432100', product: 'Salary Loan (Instant)', amount: 50000, status: 'Approved', date: '2026-03-07' },
+            { id: 'lead-3', name: 'Priya Sharma', phone: '9923456789', product: 'Lifetime Free Credit Card', amount: 25000, status: 'Pending', date: '2026-03-08' }
+        ];
+
+        // State Management
+        let agentSession = JSON.parse(localStorage.getItem('akshara_agent')) || null;
+        let products = JSON.parse(localStorage.getItem('akshara_products')) || defaultProducts;
+        let leads = JSON.parse(localStorage.getItem('akshara_leads')) || defaultLeads;
+        let currentLeadFilter = 'ALL';
+
+        window.onload = function() {
+            if (agentSession) {
+                appLoginSuccess(agentSession);
+            } else {
+                showAuthView();
+            }
+        };
+
+        // Authentication Handler
+        function handleAuth(e) {
+            e.preventDefault();
+            const identifier = document.getElementById('auth-identifier').value.trim();
+            const otpContainer = document.getElementById('otp-container');
+            const authBtn = document.getElementById('auth-btn');
+
+            if (!otpContainer.classList.contains('hidden')) {
+                const otp = document.getElementById('auth-otp').value.trim();
+                if (otp === '1234' || otp.length === 4) {
+                    const agent = { name: identifier.includes('@') ? identifier.split('@')[0] : 'Partner Agent', phone: identifier };
+                    localStorage.setItem('akshara_agent', JSON.stringify(agent));
+                    agentSession = agent;
+                    appLoginSuccess(agent);
+                } else {
+                    showModal('Invalid OTP', 'Please enter valid 4-digit OTP (hint: 1234)', 'fa-triangle-exclamation', 'text-amber-500');
+                }
+            } else {
+                if (identifier.length < 5) {
+                    showModal('Error', 'Please enter a valid phone number or email', 'fa-triangle-exclamation', 'text-red-500');
+                    return;
+                }
+                otpContainer.classList.remove('hidden');
+                authBtn.innerText = 'Verify OTP & Login';
+                showModal('OTP Sent', 'Simulated OTP (1234) sent via Firebase Auth', 'fa-paper-plane', 'text-emerald-600');
+            }
+        }
+
+        function fillDemoAgent() {
+            document.getElementById('auth-identifier').value = 'agent@akshara.com';
+            document.getElementById('otp-container').classList.remove('hidden');
+            document.getElementById('auth-otp').value = '1234';
+            document.getElementById('auth-btn').innerText = 'Verify OTP & Login';
+        }
+
+        function appLoginSuccess(agent) {
+            document.getElementById('view-auth').classList.add('hidden');
+            document.getElementById('main-app').classList.remove('hidden');
+            document.getElementById('settings-agent-name').innerText = agent.name.toUpperCase();
+            document.getElementById('settings-agent-phone').innerText = agent.phone;
+            renderAll();
+            switchTab('dashboard');
+        }
+
+        function handleLogout() {
+            localStorage.removeItem('akshara_agent');
+            agentSession = null;
+            document.getElementById('main-app').classList.add('hidden');
+            document.getElementById('view-auth').classList.remove('hidden');
+            document.getElementById('auth-form').reset();
+            document.getElementById('otp-container').classList.add('hidden');
+            document.getElementById('auth-btn').innerText = 'Get OTP / Continue';
+        }
+
+        // Navigation Tabs Controller
+        function switchTab(tabName) {
+            const tabs = ['dashboard', 'catalog', 'leads', 'settings'];
+            tabs.forEach(t => {
+                document.getElementById(`tab-${t}`).classList.add('hidden');
+                const navBtn = document.getElementById(`nav-btn-${t}`);
+                if (navBtn) {
+                    navBtn.className = 'flex flex-col items-center text-slate-400 hover:text-slate-600 transition';
+                }
+            });
+            document.getElementById(`tab-${tabName}`).classList.remove('hidden');
+            const activeNav = document.getElementById(`nav-btn-${tabName}`);
+            if (activeNav) {
+                activeNav.className = 'flex flex-col items-center text-emerald-600 transition font-bold';
+            }
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            renderAll();
+        }
+
+        // Render All Components
+        function renderAll() {
+            renderDashboardStats();
+            renderCatalog();
+            renderAdminLinks();
+            renderLeads();
+        }
+
+        // Dashboard Calculation & Rendering
+        function renderDashboardStats() {
+            let totalWallet = 0;
+            let pendingCount = 0;
+            let disbursedCount = 0;
+
+            leads.forEach(l => {
+                if (l.status === 'Disbursed') {
+                    totalWallet += Math.round(l.amount * 0.03);
+                    disbursedCount += Math.round(l.amount * 0.03);
+                } else if (l.status === 'Pending') {
+                    pendingCount += 1500;
+                }
+            });
+
+            document.getElementById('dash-wallet-balance').innerText = `₹ ${totalWallet.toLocaleString('en-IN')}`;
+            document.getElementById('dash-pending').innerText = `₹ ${pendingCount.toLocaleString('en-IN')}`;
+            document.getElementById('dash-disbursed').innerText = `₹ ${disbursedCount.toLocaleString('en-IN')}`;
+            document.getElementById('dash-total-leads').innerText = leads.length;
+
+            // Recent leads preview
+            const recentContainer = document.getElementById('recent-leads-list');
+            recentContainer.innerHTML = '';
+            leads.slice(0, 3).forEach(l => {
+                let badgeColor = l.status === 'Disbursed' ? 'bg-emerald-100 text-emerald-800' : l.status === 'Approved' ? 'bg-blue-100 text-blue-800' : 'bg-amber-100 text-amber-800';
+                recentContainer.innerHTML += `
+                    <div class="bg-white p-3 rounded-xl border border-slate-200 shadow-sm flex justify-between items-center">
+                        <div>
+                            <h5 class="text-xs font-bold text-slate-900">${l.name}</h5>
+                            <p class="text-[10px] text-slate-500">${l.product} • ₹${l.amount.toLocaleString('en-IN')}</p>
+                        </div>
+                        <span class="text-[10px] px-2 py-0.5 rounded-full font-semibold ${badgeColor}">${l.status}</span>
+                    </div>
+                `;
+            });
+        }
+
+        // Render Product Catalog
+        function renderCatalog(filterText = '') {
+            const container = document.getElementById('products-catalog-list');
+            container.innerHTML = '';
+
+            const filtered = products.filter(p => p.name.toLowerCase().includes(filterText.toLowerCase()) || p.provider.toLowerCase().includes(filterText.toLowerCase()));
+
+            if (filtered.length === 0) {
+                container.innerHTML = `<div class="text-center py-8 text-slate-400 text-xs">No financial products found matching search.</div>`;
+                return;
+            }
+
+            filtered.forEach(p => {
+                container.innerHTML += `
+                    <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200 flex flex-col justify-between space-y-3">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <span class="text-[10px] bg-emerald-50 text-emerald-700 font-semibold px-2 py-0.5 rounded">${p.badge}</span>
+                                <h4 class="text-sm font-bold text-slate-900 mt-1">${p.name}</h4>
+                                <p class="text-xs text-slate-500"><i class="fa-solid fa-building-columns mr-1"></i>${p.provider}</p>
+                            </div>
+                            <div class="text-right">
+                                <span class="text-xs font-bold text-emerald-600 block">${p.commission}</span>
+                                <span class="text-[10px] text-slate-400">${p.payout}</span>
+                            </div>
+                        </div>
+                        <div class="bg-slate-50 p-2 rounded-xl flex items-center justify-between border border-slate-100">
+                            <span class="text-[10px] text-slate-500 font-mono truncate max-w-[200px]">${p.link}</span>
+                            <button onclick="copyReferralLink('${p.link}')" class="bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] font-semibold px-3 py-1.5 rounded-lg shadow transition flex items-center gap-1">
+                                <i class="fa-solid fa-copy"></i> Share Link
+                            </button>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function filterProducts(val) {
+            renderCatalog(val);
+        }
+
+        function copyReferralLink(link) {
+            const tempInput = document.createElement('input');
+            tempInput.value = link;
+            document.body.appendChild(tempInput);
+            tempInput.select();
+            document.execCommand('copy');
+            document.body.removeChild(tempInput);
+            showModal('Link Copied!', 'Custom referral link copied to clipboard. Share with your customers on WhatsApp!', 'fa-share-nodes', 'text-emerald-600');
+        }
+
+        // Admin Links Manager
+        function renderAdminLinks() {
+            const container = document.getElementById('admin-links-editor');
+            container.innerHTML = '';
+            products.forEach((p, idx) => {
+                container.innerHTML += `
+                    <div class="space-y-1">
+                        <label class="block text-[11px] font-semibold text-slate-700">${p.name}</label>
+                        <div class="flex gap-2">
+                            <input type="text" id="admin-link-${idx}" value="${p.link}" class="flex-1 px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 font-mono focus:outline-none focus:border-emerald-500">
+                            <button onclick="updateProductLink(${idx})" class="bg-slate-900 hover:bg-slate-800 text-white text-xs px-3 py-2 rounded-xl font-medium transition">Save</button>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function updateProductLink(idx) {
+            const newVal = document.getElementById(`admin-link-${idx}`).value.trim();
+            if (newVal) {
+                products[idx].link = newVal;
+                localStorage.setItem('akshara_products', JSON.stringify(products));
+                showModal('Updated', 'Partner referral link successfully updated in database.', 'fa-check-circle', 'text-emerald-600');
+                renderCatalog();
+            }
+        }
+
+        function resetDefaultLinks() {
+            products = JSON.parse(JSON.stringify(defaultProducts));
+            localStorage.setItem('akshara_products', JSON.stringify(products));
+            renderAdminLinks();
+            renderCatalog();
+            showModal('Reset', 'All partner links reset to default values.', 'fa-rotate-right', 'text-blue-600');
+        }
+
+        // Leads Management
+        function renderLeads() {
+            const container = document.getElementById('leads-full-list');
+            container.innerHTML = '';
+
+            const filtered = currentLeadFilter === 'ALL' ? leads : leads.filter(l => l.status === currentLeadFilter);
+
+            if (filtered.length === 0) {
+                container.innerHTML = `<div class="text-center py-8 text-slate-400 text-xs">No leads found under '${currentLeadFilter}'.</div>`;
+                return;
+            }
+
+            filtered.forEach(l => {
+                let badgeColor = l.status === 'Disbursed' ? 'bg-emerald-100 text-emerald-800 border-emerald-200' : l.status === 'Approved' ? 'bg-blue-100 text-blue-800 border-blue-200' : 'bg-amber-100 text-amber-800 border-amber-200';
+                container.innerHTML += `
+                    <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200 space-y-2">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <h4 class="text-sm font-bold text-slate-900">${l.name}</h4>
+                                <p class="text-xs text-slate-500"><i class="fa-solid fa-phone mr-1"></i>${l.phone} • <span class="font-medium text-slate-700">${l.product}</span></p>
+                            </div>
+                            <span class="text-[10px] px-2.5 py-1 rounded-full font-semibold border ${badgeColor}">${l.status}</span>
+                        </div>
+                        <div class="flex justify-between items-center pt-2 border-t border-slate-100 text-xs">
+                            <span class="text-slate-500 font-medium">Loan: ₹ ${l.amount.toLocaleString('en-IN')}</span>
+                            <div class="flex gap-2">
+                                <button onclick="updateLeadStatus('${l.id}', 'Disbursed')" class="text-[11px] bg-emerald-50 text-emerald-700 hover:bg-emerald-100 px-2 py-1 rounded font-semibold transition">Disburse</button>
+                                <button onclick="deleteLead('${l.id}')" class="text-[11px] bg-red-50 text-red-600 hover:bg-red-100 px-2 py-1 rounded font-semibold transition"><i class="fa-solid fa-trash"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function filterLeads(status) {
+            currentLeadFilter = status;
+            document.querySelectorAll('.lead-filter-btn').forEach(btn => {
+                if (btn.innerText.includes(status) || (status === 'ALL' && btn.innerText.includes('All'))) {
+                    btn.className = 'lead-filter-btn px-3 py-1.5 bg-emerald-600 text-white rounded-xl text-xs font-semibold whitespace-nowrap shadow-sm';
+                } else {
+                    btn.className = 'lead-filter-btn px-3 py-1.5 bg-white text-slate-700 border border-slate-200 rounded-xl text-xs font-semibold whitespace-nowrap';
+                }
+            });
+            renderLeads();
+        }
+
+        function openLeadModal() {
+            document.getElementById('lead-modal').classList.remove('hidden');
+        }
+
+        function closeLeadModal() {
+            document.getElementById('lead-modal').classList.add('hidden');
+            document.getElementById('lead-form').reset();
+        }
+
+        function submitNewLead(e) {
+            e.preventDefault();
+            const newLead = {
+                id: 'lead-' + Date.now(),
+                name: document.getElementById('lead-name').value.trim(),
+                phone: document.getElementById('lead-phone').value.trim(),
+                product: document.getElementById('lead-product').value,
+                amount: parseFloat(document.getElementById('lead-amount').value),
+                status: document.getElementById('lead-status').value,
+                date: new Date().toISOString().split('T')[0]
+            };
+
+            leads.unshift(newLead);
+            localStorage.setItem('akshara_leads', JSON.stringify(leads));
+            closeLeadModal();
+            renderAll();
+            showModal('Lead Created', 'Customer lead successfully saved to Firestore backend database!', 'fa-circle-check', 'text-emerald-600');
+        }
+
+        function updateLeadStatus(id, newStatus) {
+            leads = leads.map(l => l.id === id ? {...l, status: newStatus} : l);
+            localStorage.setItem('akshara_leads', JSON.stringify(leads));
+            renderAll();
+            showModal('Status Updated', `Lead status updated to '${newStatus}' successfully.`, 'fa-circle-check', 'text-emerald-600');
+        }
+
+        function deleteLead(id) {
+            leads = leads.filter(l => l.id !== id);
+            localStorage.setItem('akshara_leads', JSON.stringify(leads));
+            renderAll();
+            showModal('Deleted', 'Lead record removed.', 'fa-trash', 'text-red-500');
+        }
+
+        function requestPayout() {
+            showModal('Payout Requested', 'Your wallet balance of ₹ 24,850 has been dispatched to your registered bank account via IMPS/UPI.', 'fa-wallet', 'text-emerald-600');
+        }
+
+        // AdMob Interstitial Simulators
+        function triggerInterstitialAd() {
+            document.getElementById('interstitial-ad-modal').classList.remove('hidden');
+        }
+
+        function closeInterstitialAd() {
+            document.getElementById('interstitial-ad-modal').classList.add('hidden');
+            showModal('Bonus Credited!', '+₹100 AdMob reward added to your agent earnings wallet.', 'fa-gift', 'text-amber-500');
+        }
+
+        // Custom Modal Utilities (replaces browser alerts)
+        function showModal(title, message, iconClass = 'fa-check', iconColor = 'text-emerald-600') {
+            document.getElementById('modal-title').innerText = title;
+            document.getElementById('modal-message').innerText = message;
+            const iconDiv = document.getElementById('modal-icon');
+            iconDiv.className = `w-14 h-14 bg-emerald-50 ${iconColor} rounded-full flex items-center justify-center mx-auto mb-4 text-2xl`;
+            iconDiv.innerHTML = `<i class="fa-solid ${iconClass}"></i>`;
+            document.getElementById('custom-modal').classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('custom-modal').classList.add('hidden');
+        }
+    </script>
+</body>
+</html>
