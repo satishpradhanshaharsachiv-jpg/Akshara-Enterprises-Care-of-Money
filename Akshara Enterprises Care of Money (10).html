@@ -1,0 +1,954 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Akshara Enterprises - Care of Money</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="manifest" href="data:application/manifest+json,{
+        'name': 'Akshara Enterprises Care of Money',
+        'short_name': 'Akshara Money',
+        'start_url': '.',
+        'display': 'standalone',
+        'background_color': '#0d9488',
+        'theme_color': '#0d9488',
+        'icons': [{
+            'src': 'https://cdn-icons-png.flaticon.com/512/2489/2489756.png',
+            'sizes': '512x512',
+            'type': 'image/png'
+        }]
+    }">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        brandTeal: '#0d9488',
+                        brandOrange: '#f97316',
+                        brandPurple: '#9333ea',
+                        brandYellow: '#eab308',
+                        brandEmerald: '#059669'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
+        .gradient-header {
+            background: linear-gradient(135deg, #0d9488 0%, #9333ea 50%, #f97316 100%);
+        }
+        .card-shadow {
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.08), 0 8px 10px -6px rgba(0, 0, 0, 0.08);
+        }
+        ::-webkit-scrollbar { width: 4px; height: 4px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col selection:bg-teal-500 selection:text-white pb-36">
+
+    <script>
+        const defaultLinks = {
+            unity: "https://loans.theunitybank.com/unity-pl-ui/page/exclusion/login/logindetails?utm_source=partnership&utm_medium=Aadifidelis&utm_campaign=ENT-Employee",
+            lendingkart: "https://channel.lendingkart.com/dsachannelpartner-xlr8/partner/login",
+            prefr: "https://marketplace.prefr.com/aadifidelis/",
+            muthootBizDaily: "https://creditlink.finbox.in/?partnerCode=LS_NUSHZC&agentCode=sc113648&productType=business_loan_edi&agentId=AKSHARAENTERPRIS",
+            muthootBizMonthly: "https://creditlink.finbox.in/?partnerCode=LS_POIOUY&agentCode=sc113648&productType=business_loan_emi&agentId=AKSHARAENTERPRISES",
+            muthootSalary: "https://creditlink.finbox.in/?partnerCode=LS_POIOUY&agentCode=sc113648&productType=business_loan_emi&agentId=AKSHARAENTERPRIS",
+            poonawalla: "https://instant-pocket-loan.poonawallafincorp.com/?utm_DSA_Code=PMH00690&UTM_Partner_Name=SAI_FINENT_ADVISORY_PRIVATE_LIMITED&UTM_Partner_Medium=Digital_BL&UTM_Partner_AgentCode=PFKSAI_FINENT_ADVISORY_PRIVATE_LIMITED&UTM_Partner_ReferenceID="
+        };
+
+        let appLinks = JSON.parse(localStorage.getItem('akshara_links')) || defaultLinks;
+        let currentUser = JSON.parse(localStorage.getItem('akshara_current_user')) || null;
+        let userLeads = JSON.parse(localStorage.getItem('akshara_user_leads')) || [
+            { id: 1, name: "Rahul Sharma", product: "Unity Bank Personal Loan", amount: 500000, status: "Disbursed", payout: 10000, date: "2026-06-01" },
+            { id: 2, name: "Priya Deshmukh", product: "Muthoot Daily EMI", amount: 250000, status: "Approved", payout: 5000, date: "2026-06-05" },
+            { id: 3, name: "Amit Patil", product: "Lendingkart Business", amount: 1000000, status: "Pending Verification", payout: 0, date: "2026-06-09" }
+        ];
+
+        const masterAdmins = [
+            { mobile: "8668235395", name: "Satish Ashok Pradhan", role: "Master Admin / Dev" },
+            { mobile: "7263822264", name: "Anand Ashok Pradhan", role: "Master Owner / Admin" }
+        ];
+
+        function saveLinks() {
+            localStorage.setItem('akshara_links', JSON.stringify(appLinks));
+        }
+
+        function saveLeads() {
+            localStorage.setItem('akshara_user_leads', JSON.stringify(userLeads));
+        }
+    </script>
+
+    <header class="gradient-header text-white sticky top-0 z-50 shadow-md">
+        <div class="max-w-md mx-auto px-4 py-3 flex items-center justify-between">
+            <div class="flex items-center space-x-2.5 cursor-pointer" onclick="navigate('home')">
+                <div class="w-9 h-9 rounded-xl bg-white text-brandTeal flex items-center justify-center font-bold text-lg shadow-inner">
+                    <i class="fa-solid fa-coins"></i>
+                </div>
+                <div>
+                    <h1 class="font-bold text-sm sm:text-base tracking-tight leading-tight">Akshara Enterprises</h1>
+                    <p class="text-[10px] text-yellow-200 font-medium">Care of Money • Android App</p>
+                </div>
+            </div>
+
+            <div class="flex items-center space-x-2">
+                <button onclick="openSettingsModal()" class="w-8 h-8 rounded-full bg-white/20 hover:bg-white/30 flex items-center justify-center text-white transition active:scale-95 shadow" title="Settings & Profile">
+                    <i class="fa-solid fa-gear text-xs"></i>
+                </button>
+                <div id="authHeaderBtnContainer"></div>
+            </div>
+        </div>
+    </header>
+
+    <main id="mainAppContainer" class="flex-grow max-w-md w-full mx-auto px-4 py-4 mb-4">
+    </main>
+
+    <div class="max-w-md mx-auto my-3 px-4 w-full">
+        <div class="bg-gradient-to-r from-amber-500 via-orange-500 to-yellow-400 text-slate-950 p-3 rounded-2xl shadow-lg border border-yellow-200">
+            <div class="flex items-center justify-between mb-1.5">
+                <span class="text-[10px] uppercase font-extrabold tracking-wider bg-black/10 px-2 py-0.5 rounded text-slate-900">Sponsored Ad (Game ID: 800372132)</span>
+                <span class="text-[10px] font-bold text-slate-900 bg-white/60 px-2 py-0.5 rounded-full">Live Offer</span>
+            </div>
+            <div onclick="openProductLink('unity')" class="bg-white/95 rounded-xl p-2.5 shadow-sm cursor-pointer hover:bg-white transition flex items-center justify-between">
+                <div class="flex items-center space-x-2.5">
+                    <div class="w-8 h-8 rounded-lg bg-teal-100 text-teal-700 flex items-center justify-center font-bold text-sm">
+                        <i class="fa-solid fa-bolt"></i>
+                    </div>
+                    <div>
+                        <p class="text-xs font-extrabold text-slate-900">Instant Pre-Approved Loan Offer</p>
+                        <p class="text-[11px] text-slate-600">Disbursal in 24 hours at 10.49% p.a.</p>
+                    </div>
+                </div>
+                <span class="px-3 py-1.5 bg-teal-600 hover:bg-teal-700 text-white font-bold text-[11px] rounded-lg shadow-sm whitespace-nowrap">Apply Now</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Fixed Bottom Navigation Bar positioned above Netlify/Browser bars -->
+    <nav class="fixed bottom-2 left-3 right-3 max-w-md mx-auto bg-white/95 backdrop-blur-md border border-slate-200 shadow-2xl z-40 rounded-2xl px-2 py-1.5">
+        <div class="flex justify-around items-center">
+            <button onclick="navigate('home')" id="nav-btn-home" class="flex flex-col items-center text-[11px] font-semibold text-teal-600 transition p-1.5 rounded-xl">
+                <i class="fa-solid fa-house text-base mb-0.5"></i>
+                <span>Home</span>
+            </button>
+            <button onclick="navigate('catalog')" id="nav-btn-catalog" class="flex flex-col items-center text-[11px] font-medium text-slate-500 hover:text-teal-600 transition p-1.5 rounded-xl">
+                <i class="fa-solid fa-wallet text-base mb-0.5"></i>
+                <span>Products</span>
+            </button>
+            <button onclick="navigate('tools')" id="nav-btn-tools" class="flex flex-col items-center text-[11px] font-medium text-slate-500 hover:text-teal-600 transition p-1.5 rounded-xl">
+                <i class="fa-solid fa-calculator text-base mb-0.5"></i>
+                <span>Calculators</span>
+            </button>
+            <button onclick="navigate('dashboard')" id="nav-btn-dashboard" class="flex flex-col items-center text-[11px] font-medium text-slate-500 hover:text-teal-600 transition p-1.5 rounded-xl">
+                <i class="fa-solid fa-chart-line text-base mb-0.5"></i>
+                <span>Dashboard</span>
+            </button>
+            <button onclick="checkAdminAccess()" id="nav-btn-admin" class="flex flex-col items-center text-[11px] font-medium text-slate-500 hover:text-purple-600 transition p-1.5 rounded-xl">
+                <i class="fa-solid fa-shield-halved text-base mb-0.5"></i>
+                <span>Admin</span>
+            </button>
+        </div>
+    </nav>
+
+    <footer class="bg-slate-900 text-slate-300 text-xs py-4 px-4 mt-auto mb-16 border-t border-slate-800 relative z-30 max-w-md mx-auto w-full rounded-2xl">
+        <div class="text-center space-y-2">
+            <div>
+                <h4 class="text-white font-bold text-xs flex items-center justify-center space-x-1.5">
+                    <span class="w-1.5 h-1.5 rounded-full bg-brandTeal"></span>
+                    <span>Akshara Enterprises (Care of Money)</span>
+                </h4>
+                <p class="text-slate-400 text-[11px]">Owner: Anand Ashok Pradhan (Mobile: 7263822264)</p>
+            </div>
+            <div class="border-t border-slate-800 pt-2">
+                <p class="text-slate-300 font-medium text-[11px]">App Developer: Satish Ashok Pradhan</p>
+                <p class="text-slate-400 text-[11px]">Mobile: <a href="tel:8668235395" class="text-teal-400 hover:underline">8668235395</a> | Email: <a href="mailto:Satishpradhan.shaharsachiv@gmail.com" class="text-teal-400 hover:underline">Satishpradhan.shaharsachiv@gmail.com</a></p>
+            </div>
+            <div class="text-[10px] text-slate-500 pt-1">
+                &copy; 2026 Akshara Enterprises. All rights reserved.
+            </div>
+        </div>
+    </footer>
+
+    <div id="modalBackdrop" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div id="modalContentBox" class="bg-white rounded-2xl max-w-sm w-full p-6 card-shadow relative animate-fadeIn"></div>
+    </div>
+
+    <script>
+        let currentView = 'home';
+
+        function navigate(viewName) {
+            currentView = viewName;
+            
+            ['home', 'catalog', 'tools', 'dashboard', 'admin'].forEach(v => {
+                const btn = document.getElementById(`nav-btn-${v}`);
+                if (btn) {
+                    if (v === viewName) {
+                        btn.classList.remove('text-slate-500', 'font-medium');
+                        btn.classList.add('text-teal-600', 'font-semibold');
+                    } else {
+                        btn.classList.remove('text-teal-600', 'font-semibold', 'text-purple-600');
+                        btn.classList.add('text-slate-500', 'font-medium');
+                    }
+                }
+            });
+
+            renderHeaderAuthBtn();
+            renderViewContent();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function renderHeaderAuthBtn() {
+            const container = document.getElementById('authHeaderBtnContainer');
+            if (currentUser) {
+                container.innerHTML = `
+                    <button onclick="logoutUser()" class="px-2.5 py-1 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-medium text-[11px] shadow transition">Logout</button>
+                `;
+            } else {
+                container.innerHTML = `
+                    <button onclick="openAuthModal()" class="px-2.5 py-1 rounded-xl bg-gradient-to-r from-yellow-400 to-orange-500 hover:from-yellow-500 hover:to-orange-600 text-slate-950 font-bold text-[11px] shadow transition active:scale-95">
+                        <i class="fa-solid fa-lock mr-0.5"></i> Login
+                    </button>
+                `;
+            }
+        }
+
+        function renderViewContent() {
+            const container = document.getElementById('mainAppContainer');
+            if (currentView === 'home') {
+                container.innerHTML = getHomeHTML();
+            } else if (currentView === 'catalog') {
+                container.innerHTML = getCatalogHTML();
+            } else if (currentView === 'tools') {
+                container.innerHTML = getToolsHTML();
+            } else if (currentView === 'dashboard') {
+                container.innerHTML = getDashboardHTML();
+            } else if (currentView === 'admin') {
+                container.innerHTML = getAdminHTML();
+            }
+        }
+    </script>
+
+    <script>
+        function getHomeHTML() {
+            return `
+                <div class="space-y-4">
+                    <div class="relative rounded-3xl overflow-hidden bg-gradient-to-br from-teal-600 via-purple-700 to-orange-600 text-white p-5 card-shadow">
+                        <div class="relative z-10">
+                            <span class="bg-yellow-400 text-slate-950 text-[10px] font-bold px-2.5 py-0.5 rounded-full uppercase tracking-wider inline-block mb-1.5">🔥 Instant Loan & DSA App</span>
+                            <h2 class="text-xl font-extrabold tracking-tight mb-1.5">Akshara Enterprises <br/><span class="text-yellow-300">Care of Money</span></h2>
+                            <p class="text-teal-100 text-xs mb-3 leading-relaxed">
+                                Empowering agents & customers with instant business loans, daily & monthly EMI options, and direct payouts.
+                            </p>
+                            <div class="flex flex-col sm:flex-row gap-2">
+                                <button onclick="navigate('catalog')" class="w-full py-2 bg-yellow-400 hover:bg-yellow-500 text-slate-950 font-bold rounded-xl shadow-md text-xs transition flex items-center justify-center space-x-1.5">
+                                    <i class="fa-solid fa-briefcase"></i>
+                                    <span>Explore Loan Products</span>
+                                </button>
+                                <button onclick="navigate('tools')" class="w-full py-2 bg-white/20 hover:bg-white/30 text-white font-semibold rounded-xl backdrop-blur-md text-xs transition border border-white/30 flex items-center justify-center space-x-1.5">
+                                    <i class="fa-solid fa-calculator"></i>
+                                    <span>Check Eligibility</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-2.5">
+                        <div class="bg-white p-3.5 rounded-2xl card-shadow border-l-4 border-teal-500 flex items-center space-x-2.5">
+                            <div class="w-9 h-9 rounded-xl bg-teal-100 text-teal-600 flex items-center justify-center text-base font-bold">
+                                <i class="fa-solid fa-bolt"></i>
+                            </div>
+                            <div>
+                                <p class="text-[10px] text-slate-500 font-medium">Instant Approval</p>
+                                <p class="text-xs font-bold text-slate-800">2 Mins Check</p>
+                            </div>
+                        </div>
+                        <div class="bg-white p-3.5 rounded-2xl card-shadow border-l-4 border-orange-500 flex items-center space-x-2.5">
+                            <div class="w-9 h-9 rounded-xl bg-orange-100 text-orange-600 flex items-center justify-center text-base font-bold">
+                                <i class="fa-solid fa-percent"></i>
+                            </div>
+                            <div>
+                                <p class="text-[10px] text-slate-500 font-medium">Low Interest</p>
+                                <p class="text-xs font-bold text-slate-800">From 10.49%</p>
+                            </div>
+                        </div>
+                        <div class="bg-white p-3.5 rounded-2xl card-shadow border-l-4 border-purple-500 flex items-center space-x-2.5">
+                            <div class="w-9 h-9 rounded-xl bg-purple-100 text-purple-600 flex items-center justify-center text-base font-bold">
+                                <i class="fa-solid fa-hand-holding-dollar"></i>
+                            </div>
+                            <div>
+                                <p class="text-[10px] text-slate-500 font-medium">Daily & Monthly</p>
+                                <p class="text-xs font-bold text-slate-800">Flexible EMI</p>
+                            </div>
+                        </div>
+                        <div class="bg-white p-3.5 rounded-2xl card-shadow border-l-4 border-yellow-500 flex items-center space-x-2.5">
+                            <div class="w-9 h-9 rounded-xl bg-yellow-100 text-yellow-600 flex items-center justify-center text-base font-bold">
+                                <i class="fa-solid fa-award"></i>
+                            </div>
+                            <div>
+                                <p class="text-[10px] text-slate-500 font-medium">Agent Payouts</p>
+                                <p class="text-xs font-bold text-slate-800">Live Tracker</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+    </script>
+
+    <script>
+        function getCatalogHTML() {
+            return `
+                <div class="space-y-5">
+                    <div class="bg-gradient-to-r from-teal-600 to-purple-700 rounded-3xl p-5 text-white shadow-md flex flex-col space-y-3">
+                        <div>
+                            <h2 class="text-xl font-bold">Partner Loan Catalog</h2>
+                            <p class="text-teal-100 text-xs mt-1">Verified DSA links with agent tracking for Muthoot, Unity, Lendingkart, Prefr, and Poonawalla.</p>
+                        </div>
+                        <div class="flex gap-2">
+                            <button onclick="openLeadModal()" class="flex-1 py-2.5 bg-yellow-400 hover:bg-yellow-500 text-slate-950 font-bold rounded-xl text-xs shadow transition flex items-center justify-center space-x-1">
+                                <i class="fa-solid fa-user-plus"></i>
+                                <span>Submit Lead</span>
+                            </button>
+                            <div class="bg-white/10 backdrop-blur-md px-3 py-2 rounded-xl border border-white/20 text-xs font-semibold flex items-center">
+                                <span>Agent: sc113648</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="space-y-4">
+                        <div class="bg-white rounded-3xl p-5 card-shadow border border-slate-100 flex flex-col justify-between space-y-4">
+                            <div>
+                                <div class="flex items-center justify-between mb-2">
+                                    <span class="px-2.5 py-0.5 bg-teal-100 text-teal-800 text-[10px] font-bold rounded-lg">Unity Bank</span>
+                                    <span class="text-[10px] text-emerald-600 font-semibold bg-emerald-50 px-2 py-0.5 rounded">High Payout</span>
+                                </div>
+                                <h3 class="font-bold text-slate-800 text-base mb-1">Unity Bank Personal Loan</h3>
+                                <p class="text-xs text-slate-500 leading-relaxed">Instant unsecured personal loan for salaried professionals with seamless digital processing.</p>
+                            </div>
+                            <div class="flex space-x-2">
+                                <button onclick="copyToClipboard('${appLinks.unity}')" class="flex-1 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold rounded-xl text-xs transition flex items-center justify-center space-x-1">
+                                    <i class="fa-solid fa-copy"></i>
+                                    <span>Copy Link</span>
+                                </button>
+                                <button onclick="shareViaWhatsApp('${appLinks.unity}', 'Unity Bank Personal Loan')" class="py-2 px-3 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs transition" title="Share via WhatsApp">
+                                    <i class="fa-brands fa-whatsapp text-sm"></i>
+                                </button>
+                                <button onclick="window.open('${appLinks.unity}', '_blank')" class="flex-1 py-2 bg-teal-600 hover:bg-teal-700 text-white font-semibold rounded-xl text-xs transition flex items-center justify-center space-x-1">
+                                    <span>Apply Now</span>
+                                    <i class="fa-solid fa-external-link text-[10px]"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="bg-white rounded-3xl p-5 card-shadow border border-slate-100 flex flex-col justify-between space-y-4">
+                            <div>
+                                <div class="flex items-center justify-between mb-2">
+                                    <span class="px-2.5 py-0.5 bg-orange-100 text-orange-800 text-[10px] font-bold rounded-lg">Lendingkart</span>
+                                    <span class="text-[10px] text-orange-600 font-semibold bg-orange-50 px-2 py-0.5 rounded">MSME Special</span>
+                                </div>
+                                <h3 class="font-bold text-slate-800 text-base mb-1">Lendingkart Channel Partner</h3>
+                                <p class="text-xs text-slate-500 leading-relaxed">Channel partner portal for business loans and working capital solutions.</p>
+                            </div>
+                            <div class="flex space-x-2">
+                                <button onclick="copyToClipboard('${appLinks.lendingkart}')" class="flex-1 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold rounded-xl text-xs transition flex items-center justify-center space-x-1">
+                                    <i class="fa-solid fa-copy"></i>
+                                    <span>Copy Link</span>
+                                </button>
+                                <button onclick="shareViaWhatsApp('${appLinks.lendingkart}', 'Lendingkart Business Loan')" class="py-2 px-3 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs transition">
+                                    <i class="fa-brands fa-whatsapp text-sm"></i>
+                                </button>
+                                <button onclick="window.open('${appLinks.lendingkart}', '_blank')" class="flex-1 py-2 bg-orange-500 hover:bg-orange-600 text-white font-semibold rounded-xl text-xs transition flex items-center justify-center space-x-1">
+                                    <span>Apply Now</span>
+                                    <i class="fa-solid fa-external-link text-[10px]"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="bg-white rounded-3xl p-5 card-shadow border border-slate-100 flex flex-col justify-between space-y-4">
+                            <div>
+                                <div class="flex items-center justify-between mb-2">
+                                    <span class="px-2.5 py-0.5 bg-purple-100 text-purple-800 text-[10px] font-bold rounded-lg">Prefr</span>
+                                    <span class="text-[10px] text-purple-600 font-semibold bg-purple-50 px-2 py-0.5 rounded">Instant Approval</span>
+                                </div>
+                                <h3 class="font-bold text-slate-800 text-base mb-1">Prefr Marketplace Login</h3>
+                                <p class="text-xs text-slate-500 leading-relaxed">Multi-lender marketplace for personal loans and instant credit lines.</p>
+                            </div>
+                            <div class="flex space-x-2">
+                                <button onclick="copyToClipboard('${appLinks.prefr}')" class="flex-1 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold rounded-xl text-xs transition flex items-center justify-center space-x-1">
+                                    <i class="fa-solid fa-copy"></i>
+                                    <span>Copy Link</span>
+                                </button>
+                                <button onclick="shareViaWhatsApp('${appLinks.prefr}', 'Prefr Instant Personal Loan')" class="py-2 px-3 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs transition">
+                                    <i class="fa-brands fa-whatsapp text-sm"></i>
+                                </button>
+                                <button onclick="window.open('${appLinks.prefr}', '_blank')" class="flex-1 py-2 bg-purple-600 hover:bg-purple-700 text-white font-semibold rounded-xl text-xs transition flex items-center justify-center space-x-1">
+                                    <span>Apply Now</span>
+                                    <i class="fa-solid fa-external-link text-[10px]"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="bg-white rounded-3xl p-5 card-shadow border border-slate-100 flex flex-col justify-between space-y-4">
+                            <div>
+                                <div class="flex items-center justify-between mb-2">
+                                    <span class="px-2.5 py-0.5 bg-teal-100 text-teal-800 text-[10px] font-bold rounded-lg">Muthoot FinCorp</span>
+                                    <span class="text-[10px] text-teal-600 font-semibold bg-teal-50 px-2 py-0.5 rounded">Daily Collection</span>
+                                </div>
+                                <h3 class="font-bold text-slate-800 text-base mb-1">Muthoot Daily EMI (Business)</h3>
+                                <p class="text-xs text-slate-500 leading-relaxed">Daily repayment business loan tailored for shopkeepers and small retail merchants.</p>
+                            </div>
+                            <div class="flex space-x-2">
+                                <button onclick="copyToClipboard('${appLinks.muthootBizDaily}')" class="flex-1 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold rounded-xl text-xs transition flex items-center justify-center space-x-1">
+                                    <i class="fa-solid fa-copy"></i>
+                                    <span>Copy Link</span>
+                                </button>
+                                <button onclick="shareViaWhatsApp('${appLinks.muthootBizDaily}', 'Muthoot Daily EMI Business Loan')" class="py-2 px-3 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs transition">
+                                    <i class="fa-brands fa-whatsapp text-sm"></i>
+                                </button>
+                                <button onclick="window.open('${appLinks.muthootBizDaily}', '_blank')" class="flex-1 py-2 bg-teal-600 hover:bg-teal-700 text-white font-semibold rounded-xl text-xs transition flex items-center justify-center space-x-1">
+                                    <span>Apply Now</span>
+                                    <i class="fa-solid fa-external-link text-[10px]"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="bg-white rounded-3xl p-5 card-shadow border border-slate-100 flex flex-col justify-between space-y-4">
+                            <div>
+                                <div class="flex items-center justify-between mb-2">
+                                    <span class="px-2.5 py-0.5 bg-orange-100 text-orange-800 text-[10px] font-bold rounded-lg">Muthoot FinCorp</span>
+                                    <span class="text-[10px] text-orange-600 font-semibold bg-orange-50 px-2 py-0.5 rounded">Monthly Business</span>
+                                </div>
+                                <h3 class="font-bold text-slate-800 text-base mb-1">Muthoot Monthly EMI (Business)</h3>
+                                <p class="text-xs text-slate-500 leading-relaxed">Standard monthly business loan for expansion and inventory purchase.</p>
+                            </div>
+                            <div class="flex space-x-2">
+                                <button onclick="copyToClipboard('${appLinks.muthootBizMonthly}')" class="flex-1 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold rounded-xl text-xs transition flex items-center justify-center space-x-1">
+                                    <i class="fa-solid fa-copy"></i>
+                                    <span>Copy Link</span>
+                                </button>
+                                <button onclick="shareViaWhatsApp('${appLinks.muthootBizMonthly}', 'Muthoot Monthly Business Loan')" class="py-2 px-3 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs transition">
+                                    <i class="fa-brands fa-whatsapp text-sm"></i>
+                                </button>
+                                <button onclick="window.open('${appLinks.muthootBizMonthly}', '_blank')" class="flex-1 py-2 bg-orange-500 hover:bg-orange-600 text-white font-semibold rounded-xl text-xs transition flex items-center justify-center space-x-1">
+                                    <span>Apply Now</span>
+                                    <i class="fa-solid fa-external-link text-[10px]"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="bg-white rounded-3xl p-5 card-shadow border border-slate-100 flex flex-col justify-between space-y-4">
+                            <div>
+                                <div class="flex items-center justify-between mb-2">
+                                    <span class="px-2.5 py-0.5 bg-yellow-100 text-yellow-800 text-[10px] font-bold rounded-lg">Poonawalla</span>
+                                    <span class="text-[10px] text-yellow-700 font-semibold bg-yellow-50 px-2 py-0.5 rounded">DSA: PMH00690</span>
+                                </div>
+                                <h3 class="font-bold text-slate-800 text-base mb-1">Poonawalla Fincorp Loan</h3>
+                                <p class="text-xs text-slate-500 leading-relaxed">Digital business loan partnership via Sai Finent Advisory Private Limited.</p>
+                            </div>
+                            <div class="flex space-x-2">
+                                <button onclick="copyToClipboard('${appLinks.poonawalla}')" class="flex-1 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold rounded-xl text-xs transition flex items-center justify-center space-x-1">
+                                    <i class="fa-solid fa-copy"></i>
+                                    <span>Copy Link</span>
+                                </button>
+                                <button onclick="shareViaWhatsApp('${appLinks.poonawalla}', 'Poonawalla Fincorp Loan')" class="py-2 px-3 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs transition">
+                                    <i class="fa-brands fa-whatsapp text-sm"></i>
+                                </button>
+                                <button onclick="window.open('${appLinks.poonawalla}', '_blank')" class="flex-1 py-2 bg-yellow-500 hover:bg-yellow-600 text-slate-950 font-bold rounded-xl text-xs transition flex items-center justify-center space-x-1">
+                                    <span>Apply Now</span>
+                                    <i class="fa-solid fa-external-link text-[10px]"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+    </script>
+
+    <script>
+        function getToolsHTML() {
+            return `
+                <div class="space-y-5">
+                    <div class="bg-gradient-to-r from-purple-600 via-teal-600 to-orange-500 rounded-3xl p-5 text-white shadow-md">
+                        <h2 class="text-xl font-bold">Financial Calculators</h2>
+                        <p class="text-purple-100 text-xs mt-1">Instant calculations for loan eligibility, CIBIL credit score simulation, and EMI planning.</p>
+                    </div>
+
+                    <div class="flex gap-1 bg-slate-200/80 p-1 rounded-2xl">
+                        <button onclick="switchToolTab('eligibility')" id="tool-tab-eligibility" class="flex-1 py-2 rounded-xl font-bold text-[11px] bg-teal-600 text-white shadow transition">Eligibility</button>
+                        <button onclick="switchToolTab('cibil')" id="tool-tab-cibil" class="flex-1 py-2 rounded-xl font-bold text-[11px] bg-transparent text-slate-600 hover:bg-white transition">CIBIL</button>
+                        <button onclick="switchToolTab('emi')" id="tool-tab-emi" class="flex-1 py-2 rounded-xl font-bold text-[11px] bg-transparent text-slate-600 hover:bg-white transition">EMI Calc</button>
+                    </div>
+
+                    <div id="tool-content-eligibility" class="tool-content-pane bg-white rounded-3xl p-5 card-shadow space-y-5">
+                        <h3 class="text-base font-bold text-slate-800 flex items-center space-x-2">
+                            <i class="fa-solid fa-circle-check text-teal-600"></i>
+                            <span>Loan Eligibility Checker</span>
+                        </h3>
+                        
+                        <div class="space-y-3.5">
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 mb-1">Monthly Net Income (₹)</label>
+                                <input type="number" id="eligIncome" value="50000" oninput="calculateEligibility()" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-teal-500 font-semibold text-slate-800 text-xs">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 mb-1">Existing Monthly EMIs (₹)</label>
+                                <input type="number" id="eligDebts" value="5000" oninput="calculateEligibility()" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-teal-500 font-semibold text-slate-800 text-xs">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 mb-1">Tenure (Years)</label>
+                                <select id="eligTenure" onchange="calculateEligibility()" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-teal-500 font-semibold text-slate-800 text-xs bg-white">
+                                    <option value="3">3 Years (36 Months)</option>
+                                    <option value="5" selected>5 Years (60 Months)</option>
+                                    <option value="7">7 Years (84 Months)</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="bg-teal-50 rounded-2xl p-4 border border-teal-100 space-y-3">
+                            <div>
+                                <p class="text-[11px] text-slate-600 font-medium">Estimated Eligible Loan Amount</p>
+                                <div id="eligResultAmount" class="text-2xl font-extrabold text-teal-700 mt-0.5">₹ 18,50,000</div>
+                            </div>
+                            <div class="pt-2 border-t border-teal-200/60 flex justify-between text-xs">
+                                <span class="text-slate-600">Monthly EMI:</span>
+                                <span id="eligResultEMI" class="font-bold text-slate-800">₹ 38,450</span>
+                            </div>
+                            <button onclick="openProductLink('unity')" class="w-full py-2.5 bg-teal-600 hover:bg-teal-700 text-white font-bold rounded-xl text-xs shadow transition">Apply Now</button>
+                        </div>
+                    </div>
+
+                    <div id="tool-content-cibil" class="tool-content-pane bg-white rounded-3xl p-5 card-shadow hidden space-y-5">
+                        <h3 class="text-base font-bold text-slate-800 flex items-center space-x-2">
+                            <i class="fa-solid fa-gauge-high text-purple-600"></i>
+                            <span>CIBIL Score Simulator</span>
+                        </h3>
+                        <div class="space-y-3.5">
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 mb-1">PAN Card Number</label>
+                                <input type="text" id="cibilPan" placeholder="ABCDE1234F" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 font-mono uppercase text-xs">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 mb-1">Credit History Status</label>
+                                <select id="cibilHistory" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 font-semibold text-xs bg-white">
+                                    <option value="good">Always Paid on Time (0 Defaults)</option>
+                                    <option value="average">1-2 Delays in Past 24 Months</option>
+                                    <option value="poor">Multiple Late Payments / Defaults</option>
+                                </select>
+                            </div>
+                            <button onclick="simulateCibil()" class="w-full py-2.5 bg-purple-600 hover:bg-purple-700 text-white font-bold rounded-xl text-xs shadow transition">Check CIBIL Score</button>
+                        </div>
+
+                        <div id="cibilResultBox" class="bg-purple-50 rounded-2xl p-4 border border-purple-100 flex flex-col items-center text-center space-y-2">
+                            <div class="w-24 h-24 rounded-full border-6 border-purple-600 flex flex-col items-center justify-center bg-white shadow-inner">
+                                <span class="text-2xl font-extrabold text-purple-700" id="cibilScoreVal">785</span>
+                                <span class="text-[9px] text-slate-400 font-bold uppercase">Excellent</span>
+                            </div>
+                            <h4 class="font-bold text-slate-800 text-sm" id="cibilStatusTitle">Your Credit Health is Outstanding!</h4>
+                            <p class="text-[11px] text-slate-600" id="cibilStatusDesc">Eligible for instant unsecured loans with lowest rates starting at 10.49% p.a.</p>
+                        </div>
+                    </div>
+
+                    <div id="tool-content-emi" class="tool-content-pane bg-white rounded-3xl p-5 card-shadow hidden space-y-5">
+                        <h3 class="text-base font-bold text-slate-800 flex items-center space-x-2">
+                            <i class="fa-solid fa-sliders text-orange-500"></i>
+                            <span>Interactive EMI Calculator</span>
+                        </h3>
+                        <div class="space-y-4">
+                            <div>
+                                <div class="flex justify-between text-xs font-bold text-slate-700 mb-1">
+                                    <span>Loan Amount</span>
+                                    <span id="emiAmtVal" class="text-orange-600">₹ 5,00,000</span>
+                                </div>
+                                <input type="range" id="emiAmtSlider" min="50000" max="5000000" step="50000" value="500000" oninput="calculateEMI()" class="w-full accent-orange-500 cursor-pointer">
+                            </div>
+                            <div>
+                                <div class="flex justify-between text-xs font-bold text-slate-700 mb-1">
+                                    <span>Interest Rate (% P.A.)</span>
+                                    <span id="emiRateVal" class="text-orange-600">12.0%</span>
+                                </div>
+                                <input type="range" id="emiRateSlider" min="8" max="28" step="0.5" value="12" oninput="calculateEMI()" class="w-full accent-orange-500 cursor-pointer">
+                            </div>
+                            <div>
+                                <div class="flex justify-between text-xs font-bold text-slate-700 mb-1">
+                                    <span>Tenure (Months)</span>
+                                    <span id="emiTenureVal" class="text-orange-600">36 Months</span>
+                                </div>
+                                <input type="range" id="emiTenureSlider" min="6" max="84" step="6" value="36" oninput="calculateEMI()" class="w-full accent-orange-500 cursor-pointer">
+                            </div>
+                        </div>
+
+                        <div class="bg-orange-50 rounded-2xl p-4 border border-orange-100 space-y-3">
+                            <div>
+                                <p class="text-[11px] text-slate-600 font-medium">Monthly EMI</p>
+                                <div id="resMonthlyEMI" class="text-2xl font-extrabold text-orange-700 mt-0.5">₹ 16,607</div>
+                            </div>
+                            <div class="pt-2 border-t border-orange-200/60 space-y-1 text-xs">
+                                <div class="flex justify-between"><span class="text-slate-600">Principal:</span><span id="resPrincipal" class="font-bold">₹ 5,00,000</span></div>
+                                <div class="flex justify-between"><span class="text-slate-600">Total Interest:</span><span id="resInterest" class="font-bold">₹ 97,850</span></div>
+                                <div class="flex justify-between"><span class="text-slate-600">Total Payable:</span><span id="resTotal" class="font-bold text-orange-800">₹ 5,97,850</span></div>
+                            </div>
+                            <button onclick="navigate('catalog')" class="w-full py-2.5 bg-orange-500 hover:bg-orange-600 text-white font-bold rounded-xl text-xs shadow transition">Apply For Loan</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function switchToolTab(tab) {
+            ['eligibility', 'cibil', 'emi'].forEach(t => {
+                const pane = document.getElementById(`tool-content-${t}`);
+                const btn = document.getElementById(`tool-tab-${t}`);
+                if (t === tab) {
+                    pane.classList.remove('hidden');
+                    btn.className = "flex-1 py-2 rounded-xl font-bold text-[11px] bg-teal-600 text-white shadow transition";
+                } else {
+                    pane.classList.add('hidden');
+                    btn.className = "flex-1 py-2 rounded-xl font-bold text-[11px] bg-transparent text-slate-600 hover:bg-white transition";
+                }
+            });
+        }
+
+        function calculateEligibility() {
+            const income = parseFloat(document.getElementById('eligIncome').value) || 0;
+            const debts = parseFloat(document.getElementById('eligDebts').value) || 0;
+            const tenureYears = parseInt(document.getElementById('eligTenure').value) || 5;
+            const disposable = Math.max(0, (income * 0.5) - debts);
+            const r = 0.115 / 12;
+            const n = tenureYears * 12;
+            const loanAmount = disposable > 0 ? (disposable * (Math.pow(1+r, n) - 1)) / (r * Math.pow(1+r, n)) : 0;
+            document.getElementById('eligResultAmount').innerText = `₹ ${Math.round(loanAmount).toLocaleString('en-IN')}`;
+            document.getElementById('eligResultEMI').innerText = `₹ ${Math.round(disposable).toLocaleString('en-IN')}`;
+        }
+
+        function simulateCibil() {
+            const history = document.getElementById('cibilHistory').value;
+            let score = 785, title = "Your Credit Health is Outstanding!", desc = "Eligible for instant unsecured loans starting at 10.49% p.a.";
+            if (history === 'average') {
+                score = 715; title = "Good Credit Score (Moderate)"; desc = "Eligible for standard loans. Keep credit utilization below 30%.";
+            } else if (history === 'poor') {
+                score = 620; title = "Fair / Needs Attention"; desc = "Consider secured loans or credit builder products to improve score.";
+            }
+            document.getElementById('cibilScoreVal').innerText = score;
+            document.getElementById('cibilStatusTitle').innerText = title;
+            document.getElementById('cibilStatusDesc').innerText = desc;
+        }
+
+        function calculateEMI() {
+            const p = parseFloat(document.getElementById('emiAmtSlider').value);
+            const annualRate = parseFloat(document.getElementById('emiRateSlider').value);
+            const n = parseInt(document.getElementById('emiTenureSlider').value);
+            document.getElementById('emiAmtVal').innerText = `₹ ${p.toLocaleString('en-IN')}`;
+            document.getElementById('emiRateVal').innerText = `${annualRate.toFixed(1)}%`;
+            document.getElementById('emiTenureVal').innerText = `${n} Months`;
+            const r = annualRate / 12 / 100;
+            const emi = (p * r * Math.pow(1 + r, n)) / (Math.pow(1 + r, n) - 1);
+            const totalPayment = emi * n;
+            const totalInterest = totalPayment - p;
+            document.getElementById('resMonthlyEMI').innerText = `₹ ${Math.round(emi).toLocaleString('en-IN')}`;
+            document.getElementById('resPrincipal').innerText = `₹ ${Math.round(p).toLocaleString('en-IN')}`;
+            document.getElementById('resInterest').innerText = `₹ ${Math.round(totalInterest).toLocaleString('en-IN')}`;
+            document.getElementById('resTotal').innerText = `₹ ${Math.round(totalPayment).toLocaleString('en-IN')}`;
+        }
+    </script>
+
+    <script>
+        function getDashboardHTML() {
+            if (!currentUser) {
+                return `
+                    <div class="bg-white rounded-3xl p-6 card-shadow text-center max-w-sm mx-auto my-8 space-y-4">
+                        <div class="w-14 h-14 rounded-2xl bg-teal-100 text-teal-600 flex items-center justify-center text-2xl mx-auto">
+                            <i class="fa-solid fa-lock"></i>
+                        </div>
+                        <h3 class="text-base font-bold text-slate-800">Agent Dashboard Login</h3>
+                        <p class="text-xs text-slate-500">Sign in with your phone number to view live wallet earnings, payout tracking, and lead statuses.</p>
+                        <button onclick="openAuthModal()" class="w-full py-2.5 bg-teal-600 hover:bg-teal-700 text-white font-bold rounded-xl text-xs shadow transition">Login Now</button>
+                    </div>
+                `;
+            }
+
+            let totalPayoutEarned = userLeads.reduce((acc, curr) => acc + (curr.status === 'Disbursed' || curr.status === 'Approved' ? curr.payout : 0), 0);
+
+            return `
+                <div class="space-y-5">
+                    <div class="gradient-header rounded-3xl p-5 text-white shadow-md">
+                        <span class="px-2.5 py-0.5 bg-white/20 rounded-full text-[10px] font-semibold">Welcome, Agent</span>
+                        <h2 class="text-xl font-bold mt-1.5">${currentUser.name || 'Valued Partner'}</h2>
+                        <p class="text-teal-100 text-[11px] mt-0.5">Mobile: ${currentUser.phone} • Agent ID: sc113648</p>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-3">
+                        <div class="bg-white p-4 rounded-2xl card-shadow border-l-4 border-teal-500">
+                            <p class="text-[10px] text-slate-500 font-medium">Disbursed Vol</p>
+                            <p class="text-base font-extrabold text-slate-800 mt-0.5">₹ ${userLeads.reduce((a,b)=>a+b.amount,0).toLocaleString('en-IN')}</p>
+                        </div>
+                        <div class="bg-white p-4 rounded-2xl card-shadow border-l-4 border-purple-500">
+                            <p class="text-[10px] text-slate-500 font-medium">Payout Credited</p>
+                            <p class="text-base font-extrabold text-slate-800 mt-0.5">₹ ${totalPayoutEarned.toLocaleString('en-IN')}</p>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-3xl p-5 card-shadow space-y-4">
+                        <div class="flex items-center justify-between">
+                            <h3 class="font-bold text-slate-800 text-sm">Submitted Leads</h3>
+                            <button onclick="openLeadModal()" class="text-xs font-bold text-teal-600 hover:underline">+ Add Lead</button>
+                        </div>
+                        <div class="space-y-3">
+                            ${userLeads.map(lead => `
+                                <div class="bg-slate-50 p-3 rounded-2xl border border-slate-100 space-y-1.5 text-xs">
+                                    <div class="flex justify-between font-bold text-slate-900">
+                                        <span>${lead.name}</span>
+                                        <span class="text-teal-700">₹ ${lead.amount.toLocaleString('en-IN')}</span>
+                                    </div>
+                                    <p class="text-[11px] text-slate-500">${lead.product}</p>
+                                    <div class="flex justify-between items-center pt-1 text-[10px]">
+                                        <span class="px-2 py-0.5 ${lead.status === 'Disbursed' ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'} rounded-full font-bold">${lead.status}</span>
+                                        <span class="font-bold text-slate-600">Payout: ₹ ${lead.payout}</span>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function getAdminHTML() {
+            const isAdmin = currentUser && (
+                masterAdmins.some(a => a.mobile === currentUser.phone) || currentUser.role === 'admin'
+            );
+
+            if (!isAdmin) {
+                return `
+                    <div class="bg-white rounded-3xl p-6 card-shadow text-center max-w-sm mx-auto my-8 space-y-4">
+                        <div class="w-14 h-14 rounded-2xl bg-purple-100 text-purple-600 flex items-center justify-center text-2xl mx-auto">
+                            <i class="fa-solid fa-shield-halved"></i>
+                        </div>
+                        <h3 class="text-base font-bold text-slate-800">Master Admin Access Required</h3>
+                        <p class="text-xs text-slate-500">Restricted to Owners Anand Ashok Pradhan & Satish Ashok Pradhan.</p>
+                        <button onclick="openAuthModal('admin')" class="w-full py-2.5 bg-purple-600 hover:bg-purple-700 text-white font-bold rounded-xl text-xs shadow transition">Admin Login</button>
+                    </div>
+                `;
+            }
+
+            return `
+                <div class="space-y-5">
+                    <div class="bg-gradient-to-r from-purple-700 to-teal-700 rounded-3xl p-5 text-white shadow-md">
+                        <span class="px-2 py-0.5 bg-white/20 rounded-full text-[10px] font-bold">Master Control Panel</span>
+                        <h2 class="text-xl font-bold mt-1">Akshara Enterprises Admin</h2>
+                        <p class="text-purple-100 text-xs mt-0.5">Live partner link updates across all devices.</p>
+                    </div>
+
+                    <div class="bg-white rounded-3xl p-5 card-shadow space-y-4">
+                        <h3 class="font-bold text-slate-800 text-sm flex items-center space-x-2">
+                            <i class="fa-solid fa-link text-purple-600"></i>
+                            <span>DSA Link Manager</span>
+                        </h3>
+                        
+                        <div class="space-y-3 text-xs">
+                            <div>
+                                <label class="block font-semibold text-slate-700 mb-1">Unity Bank Link</label>
+                                <input type="text" id="adminLinkUnity" value="${appLinks.unity}" class="w-full px-3 py-2 rounded-xl border border-slate-300 font-mono text-[11px]">
+                            </div>
+                            <div>
+                                <label class="block font-semibold text-slate-700 mb-1">Lendingkart Link</label>
+                                <input type="text" id="adminLinkLendingkart" value="${appLinks.lendingkart}" class="w-full px-3 py-2 rounded-xl border border-slate-300 font-mono text-[11px]">
+                            </div>
+                            <div>
+                                <label class="block font-semibold text-slate-700 mb-1">Prefr Link</label>
+                                <input type="text" id="adminLinkPrefr" value="${appLinks.prefr}" class="w-full px-3 py-2 rounded-xl border border-slate-300 font-mono text-[11px]">
+                            </div>
+                            <div>
+                                <label class="block font-semibold text-slate-700 mb-1">Muthoot Daily EMI Link</label>
+                                <input type="text" id="adminLinkMuthootDaily" value="${appLinks.muthootBizDaily}" class="w-full px-3 py-2 rounded-xl border border-slate-300 font-mono text-[11px]">
+                            </div>
+                            <div>
+                                <label class="block font-semibold text-slate-700 mb-1">Muthoot Monthly EMI Link</label>
+                                <input type="text" id="adminLinkMuthootMonthly" value="${appLinks.muthootBizMonthly}" class="w-full px-3 py-2 rounded-xl border border-slate-300 font-mono text-[11px]">
+                            </div>
+                            <div>
+                                <label class="block font-semibold text-slate-700 mb-1">Poonawalla Link</label>
+                                <input type="text" id="adminLinkPoonawalla" value="${appLinks.poonawalla}" class="w-full px-3 py-2 rounded-xl border border-slate-300 font-mono text-[11px]">
+                            </div>
+
+                            <button onclick="saveAdminLinks()" class="w-full py-3 bg-purple-600 hover:bg-purple-700 text-white font-bold rounded-xl text-xs shadow transition">Save All Links</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function saveAdminLinks() {
+            appLinks.unity = document.getElementById('adminLinkUnity').value;
+            appLinks.lendingkart = document.getElementById('adminLinkLendingkart').value;
+            appLinks.prefr = document.getElementById('adminLinkPrefr').value;
+            appLinks.muthootBizDaily = document.getElementById('adminLinkMuthootDaily').value;
+            appLinks.muthootBizMonthly = document.getElementById('adminLinkMuthootMonthly').value;
+            appLinks.poonawalla = document.getElementById('adminLinkPoonawalla').value;
+            saveLinks();
+            showToast("Partner links updated successfully!");
+        }
+    </script>
+
+    <script>
+        function openAuthModal() {
+            const backdrop = document.getElementById('modalBackdrop');
+            const box = document.getElementById('modalContentBox');
+            backdrop.classList.remove('hidden');
+            
+            box.innerHTML = `
+                <div class="space-y-4">
+                    <div class="flex justify-between items-center">
+                        <h3 class="font-bold text-slate-800 text-base">Akshara Login</h3>
+                        <button onclick="closeModal()" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-lg"></i></button>
+                    </div>
+                    <div class="space-y-3 text-xs">
+                        <div>
+                            <label class="block font-semibold text-slate-700 mb-1">Mobile Number</label>
+                            <input type="tel" id="authPhone" placeholder="10-digit mobile number" class="w-full px-3 py-2.5 rounded-xl border border-slate-300 font-semibold">
+                        </div>
+                        <div>
+                            <label class="block font-semibold text-slate-700 mb-1">Password / OTP</label>
+                            <input type="password" id="authPass" placeholder="Enter password" class="w-full px-3 py-2.5 rounded-xl border border-slate-300 font-semibold">
+                        </div>
+                        <button onclick="processLogin()" class="w-full py-2.5 bg-teal-600 hover:bg-teal-700 text-white font-bold rounded-xl shadow transition">Login Now</button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function processLogin() {
+            const phone = document.getElementById('authPhone').value.trim();
+            if (!phone) {
+                showToast("Please enter mobile number.");
+                return;
+            }
+            let role = 'user', name = 'Customer / Agent';
+            if (phone === '8668235395') { name = 'Satish Ashok Pradhan'; role = 'admin'; }
+            else if (phone === '7263822264') { name = 'Anand Ashok Pradhan'; role = 'admin'; }
+            
+            currentUser = { phone, name, role };
+            localStorage.setItem('akshara_current_user', JSON.stringify(currentUser));
+            closeModal();
+            renderHeaderAuthBtn();
+            renderViewContent();
+            showToast(`Welcome back, ${name}!`);
+        }
+
+        function logoutUser() {
+            currentUser = null;
+            localStorage.removeItem('akshara_current_user');
+            renderHeaderAuthBtn();
+            renderViewContent();
+            showToast("Logged out successfully.");
+        }
+
+        function openSettingsModal() {
+            const backdrop = document.getElementById('modalBackdrop');
+            const box = document.getElementById('modalContentBox');
+            backdrop.classList.remove('hidden');
+            
+            box.innerHTML = `
+                <div class="space-y-4">
+                    <div class="flex justify-between items-center">
+                        <h3 class="font-bold text-slate-800 text-base">App Info & Settings</h3>
+                        <button onclick="closeModal()" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-lg"></i></button>
+                    </div>
+                    <div class="bg-slate-50 rounded-2xl p-3 text-xs space-y-1.5 border border-slate-200">
+                        <p class="font-bold text-slate-800">Akshara Enterprises (Care of Money)</p>
+                        <p>Owner: Anand Ashok Pradhan (7263822264)</p>
+                        <p>App Developer: Satish Ashok Pradhan (8668235395)</p>
+                        <p class="text-amber-600 font-bold mt-1">AdMob Game ID: 800372132 Active</p>
+                    </div>
+                    <div class="flex space-x-2">
+                        <button onclick="closeModal(); navigate('admin')" class="flex-1 py-2 bg-purple-600 text-white font-bold rounded-xl text-xs">Admin Panel</button>
+                        <button onclick="closeModal()" class="flex-1 py-2 bg-slate-200 text-slate-700 font-bold rounded-xl text-xs">Close</button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function openLeadModal() {
+            const backdrop = document.getElementById('modalBackdrop');
+            const box = document.getElementById('modalContentBox');
+            backdrop.classList.remove('hidden');
+            
+            box.innerHTML = `
+                <div class="space-y-4">
+                    <div class="flex justify-between items-center">
+                        <h3 class="font-bold text-slate-800 text-base">Submit New Lead</h3>
+                        <button onclick="closeModal()" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-lg"></i></button>
+                    </div>
+                    <div class="space-y-3 text-xs">
+                        <div>
+                            <label class="block font-semibold text-slate-700 mb-1">Customer Full Name</label>
+                            <input type="text" id="leadName" placeholder="Enter customer name" class="w-full px-3 py-2 rounded-xl border border-slate-300 font-semibold">
+                        </div>
+                        <div>
+                            <label class="block font-semibold text-slate-700 mb-1">Select Loan Product</label>
+                            <select id="leadProduct" class="w-full px-3 py-2 rounded-xl border border-slate-300 font-semibold bg-white">
+                                <option>Unity Bank Personal Loan</option>
+                                <option>Lendingkart Business Loan</option>
+                                <option>Muthoot Daily EMI Business</option>
+                                <option>Muthoot Monthly EMI Business</option>
+                                <option>Poonawalla Fincorp Loan</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block font-semibold text-slate-700 mb-1">Required Amount (₹)</label>
+                            <input type="number" id="leadAmt" placeholder="500000" class="w-full px-3 py-2 rounded-xl border border-slate-300 font-semibold">
+                        </div>
+                        <button onclick="submitLead()" class="w-full py-2.5 bg-teal-600 text-white font-bold rounded-xl shadow">Submit Lead</button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function submitLead() {
+            const name = document.getElementById('leadName').value.trim();
+            const product = document.getElementById('leadProduct').value;
+            const amount = parseFloat(document.getElementById('leadAmt').value) || 100000;
+            if (!name) { showToast("Please enter customer name."); return; }
+            const newLead = { id: userLeads.length + 1, name, product, amount, status: "Pending Verification", payout: Math.round(amount * 0.02), date: new Date().toISOString().split('T')[0] };
+            userLeads.unshift(newLead);
+            saveLeads();
+            closeModal();
+            showToast("Lead submitted successfully!");
+            if (currentView === 'dashboard') renderViewContent();
+        }
+
+        function checkAdminAccess() { navigate('admin'); }
+        function openProductLink(key) { const url = appLinks[key]; if (url) window.open(url, '_blank'); else showToast("Link not found."); }
+        function copyToClipboard(text) {
+            const dummy = document.createElement('textarea');
+            document.body.appendChild(dummy);
+            dummy.value = text;
+            dummy.select();
+            document.execCommand('copy');
+            document.body.removeChild(dummy);
+            showToast("Link copied to clipboard!");
+        }
+        function shareViaWhatsApp(url, productName) {
+            const message = `🌟 *Akshara Enterprises (Care of Money)* \n\nApply for *${productName}* instantly:\n👉 ${url}\n\nManaged by Anand Ashok Pradhan & Satish Ashok Pradhan.`;
+            window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(message)}`, '_blank');
+        }
+        function closeModal() { document.getElementById('modalBackdrop').classList.add('hidden'); }
+        function showToast(message) {
+            const toast = document.createElement('div');
+            toast.className = 'fixed bottom-28 left-1/2 transform -translate-x-1/2 bg-slate-900 text-white px-4 py-2.5 rounded-xl shadow-2xl text-xs font-semibold z-50';
+            toast.innerText = message;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 2500);
+        }
+
+        window.onload = function() { navigate('home'); };
+    </script>
+</body>
+</html>
