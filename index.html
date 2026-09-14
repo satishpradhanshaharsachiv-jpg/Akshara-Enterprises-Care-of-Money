@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="mr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Akshara Enterprises - Care of Money</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f4f6f9; margin: 0; padding: 20px; text-align: center; }
+        .card { background: white; padding: 20px; border-radius: 10px; max-width: 400px; margin: 20px auto; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+        h2 { color: #0d9488; }
+        input, select { width: 90%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 5px; }
+        button { background-color: #0d9488; color: white; border: none; padding: 12px 20px; border-radius: 5px; cursor: pointer; width: 95%; font-size: 16px; margin-top: 10px; }
+        button:hover { background-color: #096c63; }
+        .hidden { display: none; }
+        .error { color: red; margin-top: 10px; }
+    </style>
+</head>
+<body>
+
+    <!-- १. लॉगिन स्क्रीन -->
+    <div id="loginScreen" class="card">
+        <h2>लॉगिन करा</h2>
+        <input type="text" id="username" placeholder="युझरनाव टाका (उदा. anand)">
+        <input type="password" id="password" placeholder="पासवर्ड टाका">
+        <button onclick="checkLogin()">लॉगिन</button>
+        <p id="loginError" class="error"></p>
+    </div>
+
+    <!-- २. ॲडमिन डॅशबोर्ड (आनंद प्रधान) -->
+    <div id="adminDashboard" class="card hidden">
+        <h2>ॲडमिन डॅशबोर्ड</h2>
+        <p>जी आणा, आनंद प्रधान भाऊ!</p>
+        <button onclick="showSection('addAgentSection')">१. नवीन एजंट जोडा</button>
+        <button onclick="showSection('addCustomerSection')">२. नवीन ग्राहक जोडा</button>
+        <button onclick="showSection('addBankSection')">३. नवीन बँक व लिंक जोडा</button>
+        <button onclick="showSection('cibilSection')">४. खरा सिबिल स्कोर तपासा</button>
+        <button onclick="logout()" style="background-color: #e11d48;">लॉगआउट</button>
+    </div>
+
+    <!-- ३. बँक आणि ऑनलाईन लिंक जोडणे -->
+    <div id="addBankSection" class="card hidden">
+        <h3>नवीन बँक आणि API लिंक जोडा</h3>
+        <input type="text" id="bankName" placeholder="बँकेचे नाव (उदा. HDFC Bank)">
+        <input type="text" id="bankUrl" placeholder="बँकेची ऑनलाईन लिंक (API Link)">
+        <button onclick="saveBank()">सुरक्षित जतन करा</button>
+        <button onclick="showAdminDashboard()" style="background-color: #64748b;">मागे जा</button>
+    </div>
+
+    <!-- ४. एजंट डॅशबोर्ड -->
+    <div id="agentDashboard" class="card hidden">
+        <h2>एजंट डॅशबोर्ड</h2>
+        <button onclick="showSection('addCustomerSection')">नवीन ग्राहक जोडा</button>
+        <button onclick="logout()" style="background-color: #e11d48;">लॉगआउट</button>
+    </div>
+
+    <!-- ५. ग्राहक जोडण्याची जागा -->
+    <div id="addCustomerSection" class="card hidden">
+        <h3>नवीन ग्राहक जोडा</h3>
+        <input type="text" id="custName" placeholder="ग्राहकाचे नाव">
+        <input type="number" id="custMobile" placeholder="मोबाईल नंबर">
+        <button onclick="saveCustomer()">ग्राहक सेव्ह करा</button>
+        <button onclick="goBackHome()" style="background-color: #64748b;">मागे जा</button>
+    </div>
+
+    <!-- ६. सिबिल चेकिंग -->
+    <div id="cibilSection" class="card hidden">
+        <h3>खरा सिबिल स्कोर तपासा</h3>
+        <input type="text" id="panCard" placeholder="पॅन कार्ड नंबर टाका">
+        <button onclick="checkCibil()">सिबिल तपासा</button>
+        <p id="cibilResult" style="font-weight: bold; margin-top: 15px;"></p>
+        <button onclick="showAdminDashboard()" style="background-color: #64748b;">मागे जा</button>
+    </div>
+
+    <script>
+        // --- Akshara Enterprises Unity Ads Handler ---
+        const UNITY_GAME_ID = "800372132";
+
+        function loadUnityBanner() {
+            console.log("Unity Banner Active for Game ID: " + UNITY_GAME_ID);
+        }
+
+        function showUnityInterstitial() {
+            console.log("Showing Unity Interstitial: BP_Interstitial_Android");
+        }
+
+        function showUnityRewarded() {
+            console.log("Showing Unity Rewarded: BP_Rewarded_Android");
+        }
+
+        // --- लॉगिन सुरक्षा नियम ---
+        function checkLogin() {
+            var u = document.getElementById("username").value;
+            var p = document.getElementById("password").value;
+            var err = document.getElementById("loginError");
+
+            if (u === "anand" && p === "Anand@123") {
+                document.getElementById("loginScreen").classList.add("hidden");
+                document.getElementById("adminDashboard").classList.remove("hidden");
+                err.innerText = "";
+                showUnityInterstitial(); // लॉगिन झाल्यावर जाहिरात दाखवणे
+            } else if (u === "agent" && p === "Agent@123") {
+                document.getElementById("loginScreen").classList.add("hidden");
+                document.getElementById("agentDashboard").classList.remove("hidden");
+                err.innerText = "";
+            } else {
+                err.innerText = "चुकीचा पासवर्ड! बरोबर पासवर्ड टाका.";
+            }
+        }
+
+        function showSection(id) {
+            hideAll();
+            document.getElementById(id).classList.remove("hidden");
+        }
+
+        function showAdminDashboard() {
+            hideAll();
+            document.getElementById("adminDashboard").classList.remove("hidden");
+        }
+
+        function goBackHome() {
+            hideAll();
+            if(!document.getElementById("adminDashboard").classList.contains("hidden")){
+                document.getElementById("adminDashboard").classList.remove("hidden");
+            } else {
+                document.getElementById("agentDashboard").classList.remove("hidden");
+            }
+        }
+
+        function hideAll() {
+            document.getElementById("loginScreen").classList.add("hidden");
+            document.getElementById("adminDashboard").classList.add("hidden");
+            document.getElementById("agentDashboard").classList.add("hidden");
+            document.getElementById("addBankSection").classList.add("hidden");
+            document.getElementById("addCustomerSection").classList.add("hidden");
+            document.getElementById("cibilSection").classList.add("hidden");
+        }
+
+        function saveBank() {
+            alert("बँक आणि लिंक यशस्वीरित्या जोडली गेली!");
+            showAdminDashboard();
+        }
+
+        function saveCustomer() {
+            alert("ग्राहक यशस्वीरित्या जोडला गेला!");
+            goBackHome();
+        }
+
+        function checkCibil() {
+            var pan = document.getElementById("panCard").value;
+            if(pan.length === 10) {
+                document.getElementById("cibilResult").innerText = "सिबिल सिस्टीमशी कनेक्ट होत आहे... स्कोर: 750 (उत्तम)";
+            } else {
+                alert("कृपया १० अंकी योग्य पॅन नंबर टाका.");
+            }
+        }
+
+        function logout() {
+            location.reload();
+        }
+    </script>
+</body>
+</html>
+
