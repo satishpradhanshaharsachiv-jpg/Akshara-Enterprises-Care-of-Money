@@ -949,6 +949,24 @@
         }
 
         window.onload = function() { navigate('home'); };
+                // --- Akshara Enterprises Unity Ads Handler ---
+        const UNITY_GAME_ID = "800372132";
+
+        // 1. Banner Ad Code (BP_Banner_Android)
+        function loadUnityBanner() {
+            console.log("Unity Banner Active for Game ID: " + UNITY_GAME_ID);
+        }
+
+        // 2. Interstitial Ad Code (BP_Interstitial_Android)
+        function showUnityInterstitial() {
+            console.log("Showing Unity Interstitial: BP_Interstitial_Android");
+        }
+
+        // 3. Rewarded Ad Code (BP_Rewarded_Android)
+        function showUnityRewarded() {
+            console.log("Showing Unity Rewarded: BP_Rewarded_Android");
+        }
+
     </script>
 </body>
 </html>
