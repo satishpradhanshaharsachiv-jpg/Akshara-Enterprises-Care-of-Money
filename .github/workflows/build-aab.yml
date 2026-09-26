@@ -1,4 +1,4 @@
-name: Build Android AAB
+name: Build Web App
 
 on:
   push:
@@ -11,31 +11,8 @@ jobs:
     - name: Checkout Code
       uses: actions/checkout@v3
 
-    - name: Set up Java
-      uses: actions/setup-java@v4
-      with:
-        distribution: 'temurin'
-        java-version: '17'
-
-    - name: Set up Node.js
-      uses: actions/setup-node@v3
-      with:
-        node-version: '18'
-
-    - name: Install Dependencies
-      run: npm install
-
-    - name: Build Web App
-      run: npm run build
-
-    - name: Create Android Archive
-      run: |
-        mkdir -p android-app/app/src/main/assets
-        cp -r dist/* android-app/app/src/main/assets/
-        echo "Web app bundled successfully for AAB conversion"
-
-    - name: Upload Artifact
+    - name: Archive Web Files
       uses: actions/upload-artifact@v4
       with:
-        name: app-release-aab
-        path: android-app/
+        name: dist-folder
+        path: .
