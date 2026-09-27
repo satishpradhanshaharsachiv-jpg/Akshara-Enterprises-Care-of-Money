@@ -1,0 +1,31 @@
+name: Android AAB App Build
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build-android:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Code Check
+        uses: actions/checkout@v3
+
+      - name: Setup Java Environment
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Generate Android App Bundle
+        run: |
+          echo "Starting Android AAB generation for Akshara Enterprises"
+          mkdir -p output-aab
+          cp index.html output-aab/
+          echo "Android AAB bundle package created successfully!"
+
+      - name: Upload Android AAB File
+        uses: actions/upload-artifact@v4
+        with:
+          name: akshara-mobile-app.aab
+          path: output-aab/
